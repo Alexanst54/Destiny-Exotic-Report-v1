@@ -29,7 +29,13 @@ app.get('/auth/callback', async (req, res) => {
     });
     res.json(response.data);
   } catch (err) {
-    res.status(500).json({ error: 'OAuth error', details: err.message });
+    if (err.response) {
+      console.error('[OAUTH ERROR]', err.response.status, err.response.data);
+      res.status(500).json({ error: 'OAuth error', details: err.message, bungie: err.response.data });
+    } else {
+      console.error('[OAUTH ERROR]', err.message);
+      res.status(500).json({ error: 'OAuth error', details: err.message });
+    }
   }
 });
 
