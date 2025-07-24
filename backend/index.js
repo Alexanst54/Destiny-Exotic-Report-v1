@@ -10,6 +10,7 @@ app.use(express.json());
 // Redirige l'utilisateur vers Bungie pour l'auth
 app.get('/auth/login', (req, res) => {
   const url = `https://www.bungie.net/en/OAuth/Authorize?client_id=${process.env.BUNGIE_CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(process.env.REDIRECT_URI || "http://localhost:3000/auth/callback")}`;
+  console.log("[OAUTH LOGIN] Redirection vers:", url); // <-- Ajoute cette ligne
   res.redirect(url);
 });
 
