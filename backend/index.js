@@ -18,13 +18,12 @@ app.get('/auth/login', (req, res) => {
 app.get('/auth/callback', async (req, res) => {
   const code = req.query.code;
   try {
-    const response = await axios.post('https://www.bungie.net/Platform/App/OAuth/token/', null, {
-      params: {
-        grant_type: 'authorization_code',
-        code,
-        client_id: process.env.BUNGIE_CLIENT_ID,
-        client_secret: process.env.BUNGIE_CLIENT_SECRET
-      },
+    const params = new URLSearchParams();
+    params.append('grant_type', 'authorization_code');
+    params.append('code', code);
+    params.append('client_id', process.env.BUNGIE_CLIENT_ID);
+    params.append('client_secret', process.env.BUNGIE_CLIENT_SECRET);
+    const response = await axios.post('https://www.bungie.net/Platform/App/OAuth/token/', params, {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
     });
     res.json(response.data);
