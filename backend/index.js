@@ -99,6 +99,43 @@ app.get('/api/profile', async (req, res) => {
   }
 });
 
+// Route pour récupérer les activités Bungie du joueur connecté
+app.get('/api/activities', async (req, res) => {
+  const auth = req.headers.authorization;
+  if (!auth || !auth.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Token manquant' });
+  }
+  const accessToken = auth.replace('Bearer ', '');
+
+  try {
+    // Récupérer l'identité du joueur
+    const userRes = await axios.get('https://www.bungie.net/Platform/User/GetMembershipsForCurrentUser/', {
+      headers: {
+        'X-API-Key': process.env.BUNGIE_API_KEY,
+        'Authorization': `Bearer ${accessToken}`
+      }
+    });
+    const memberships = userRes.data.Response.destinyMemberships;
+    if (!memberships || memberships.length === 0) {
+      return res.status(404).json({ error: 'Aucun profil Destiny trouvé' });
+    }
+    const main = memberships[0];
+
+    // Récupérer les activités
+    const activitiesRes = await axios.get(`https://www.bungie.net/Platform/Destiny2/${main.membershipType}/Account/${main.membershipId}/ActivityHistory/?count=10`, {
+      headers: {
+        'X-API-Key': process.env.BUNGIE_API_KEY,
+        'Authorization': `Bearer ${accessToken}`
+      }
+    });
+
+    res.json({ activities: activitiesRes.data.Response.activities });
+  } catch (err) {
+    console.error('[ACTIVITIES ERROR]', err.message);
+    res.status(500).json({ error: 'Erreur lors de la récupération des activités Bungie' });
+  }
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Backend Express running on http://localhost:${PORT}`);
