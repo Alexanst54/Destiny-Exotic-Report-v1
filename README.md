@@ -1,6 +1,7 @@
 # 🛰️ Destiny 2 Exotic Mission Tracker (WIP)
 
 A work-in-progress web application that connects to the [Bungie API](https://bungie-net.github.io/) to display detailed statistics for **Exotic Missions** in Destiny 2. Track your completions, deaths, time spent, and more — all in one place.
+<img width="877" height="839" alt="image" src="https://github.com/user-attachments/assets/80c5ae63-7671-40f2-8e3f-f060844bc23a" />
 
 ---
 
