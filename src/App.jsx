@@ -84,7 +84,7 @@ const exoticActivities = [
 
 function App() {
   return (
-    <Router>
+    <Router future={{ v7_relativeSplatPath: true }}>
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-[#23243a] to-[#181926] text-white font-sans w-full min-w-0">
         <div className="w-full flex-1 flex flex-col">
         <div className="flex flex-1 justify-start w-full">

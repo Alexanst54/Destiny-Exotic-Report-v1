@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+import axios from "axios";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, LineChart, Line, Legend } from "recharts";
 
 export default function Dashboard() {
@@ -20,6 +22,34 @@ export default function Dashboard() {
     { year: 2025, completions: 30 },
   ];
 
+  const [accessToken, setAccessToken] = useState(null);
+  const [authMessage, setAuthMessage] = useState("");
+  const [profile, setProfile] = useState(null);
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get("code");
+    if (code) {
+      axios.get(`http://localhost:3000/auth/callback?code=${code}`)
+        .then(res => {
+          setAccessToken(res.data.access_token);
+          setAuthMessage("Connexion Bungie réussie !");
+          window.history.replaceState({}, document.title, window.location.pathname);
+        })
+        .catch(() => setAuthMessage("Erreur lors de l'authentification Bungie."));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (accessToken) {
+      axios.get("http://localhost:3000/api/profile", {
+        headers: { Authorization: `Bearer ${accessToken}` }
+      })
+        .then(res => setProfile(res.data))
+        .catch(() => setProfile(null));
+    }
+  }, [accessToken]);
+
   return (
     <>
       {/* Header / Login Section */}
@@ -28,17 +58,41 @@ export default function Dashboard() {
           <h2 className="text-lg tracking-widest text-gray-700 dark:text-gray-400 mb-2">DESTINY 2</h2>
           <h1 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900 dark:text-white">Exotic Mission Tracker</h1>
           <p className="mb-6 text-gray-700 dark:text-gray-300">Track your progress in Destiny 2 exotic missions.</p>
-          <button className="bg-yellow-600 hover:bg-yellow-500 text-black font-semibold px-6 py-2 rounded-lg shadow transition">LOGIN WITH BUNGIE</button>
+          {!accessToken ? (
+            <button
+              onClick={() => window.location.href = "http://localhost:3000/auth/login"}
+              className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded"
+            >
+              Se connecter avec Bungie.net
+            </button>
+          ) : (
+            <div className="text-green-500 font-semibold mb-2">{authMessage}</div>
+          )}
         </div>
         {/* Profile Section */}
         <div className="bg-white dark:bg-[#23243a] rounded-2xl shadow-lg p-8 flex flex-col items-center">
           <div className="w-20 h-20 rounded-full bg-gray-300 dark:bg-gray-700 mb-4 flex items-center justify-center overflow-hidden border-4 border-yellow-400 shadow">
-            {/* Emblème du joueur */}
-            <img src="/images/emblem.png
-            " alt="Emblème du joueur" className="object-cover w-full h-full" />
+            {/* Emblème du joueur Bungie */}
+            {profile && profile.emblemPath ? (
+              <img src={`https://www.bungie.net${profile.emblemPath}`} alt="Emblème du joueur" className="object-cover w-full h-full" />
+            ) : profile && profile.iconPath ? (
+              <img src={`https://www.bungie.net${profile.iconPath}`} alt="Emblème du joueur" className="object-cover w-full h-full" />
+            ) : (
+              <img src="/images/emblem.png" alt="Emblème du joueur" className="object-cover w-full h-full" />
+            )}
           </div>
-          <h2 className="text-xl font-bold mb-1 text-gray-900 dark:text-white">GuardianName</h2>
-          <span className="bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200 text-xs px-3 py-1 rounded-full mb-4">STEAM</span>
+          <h2 className="text-xl font-bold mb-1 text-gray-900 dark:text-white">{profile ? profile.displayName : "GuardianName"}</h2>
+          <span className="bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200 text-xs px-3 py-1 rounded-full mb-2">{profile ? profile.platform : "STEAM"}</span>
+          {profile && profile.clanName && (
+            <div className="text-sm text-gray-700 dark:text-gray-300 mb-1">
+              Clan : <span className="font-semibold">{profile.clanName}</span>
+            </div>
+          )}
+          {profile && profile.seasonLevel !== null && (
+            <div className="text-sm text-gray-700 dark:text-gray-300 mb-4">
+              Niveau de saison : <span className="font-semibold">{profile.seasonLevel}</span>
+            </div>
+          )}
           <div className="w-full">
             <div className="flex flex-col gap-2">
               <button className="w-full bg-gray-100 dark:bg-[#181926] hover:bg-gray-200 dark:hover:bg-[#23243a] rounded-lg py-2 flex items-center justify-between px-4">
