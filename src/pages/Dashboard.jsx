@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, LineChart, Line, Legend } from "recharts";
+import BungieProfile from '../components/BungieProfile';
 
 export default function Dashboard() {
   // Données fictives par classe
@@ -24,7 +25,6 @@ export default function Dashboard() {
 
   const [accessToken, setAccessToken] = useState(null);
   const [authMessage, setAuthMessage] = useState("");
-  const [profile, setProfile] = useState(null);
 
   // Récupère l'URL du backend depuis la variable d'environnement
   const apiUrl = import.meta.env.VITE_API_URL;
@@ -42,16 +42,6 @@ export default function Dashboard() {
         .catch(() => setAuthMessage("Erreur lors de l'authentification Bungie."));
     }
   }, [apiUrl]);
-
-  useEffect(() => {
-    if (accessToken) {
-      axios.get(`${apiUrl}/api/profile`, {
-        headers: { Authorization: `Bearer ${accessToken}` }
-      })
-        .then(res => setProfile(res.data))
-        .catch(() => setProfile(null));
-    }
-  }, [accessToken, apiUrl]);
 
   return (
     <>
@@ -74,50 +64,7 @@ export default function Dashboard() {
         </div>
         {/* Profile Section */}
         <div className="bg-white dark:bg-[#23243a] rounded-2xl shadow-lg p-8 flex flex-col items-center">
-          <div className="w-20 h-20 rounded-full bg-gray-300 dark:bg-gray-700 mb-4 flex items-center justify-center overflow-hidden border-4 border-yellow-400 shadow">
-            {/* Emblème du joueur Bungie */}
-            {profile && profile.emblemPath ? (
-              <img src={`https://www.bungie.net${profile.emblemPath}`} alt="Emblème du joueur" className="object-cover w-full h-full" />
-            ) : profile && profile.iconPath ? (
-              <img src={`https://www.bungie.net${profile.iconPath}`} alt="Emblème du joueur" className="object-cover w-full h-full" />
-            ) : (
-              <img src="/images/emblem.png" alt="Emblème du joueur" className="object-cover w-full h-full" />
-            )}
-          </div>
-          <h2 className="text-xl font-bold mb-1 text-gray-900 dark:text-white">{profile ? profile.displayName : "GuardianName"}</h2>
-          <span className="bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200 text-xs px-3 py-1 rounded-full mb-2">{profile ? profile.platform : "STEAM"}</span>
-          {profile && profile.clanName && (
-            <div className="text-sm text-gray-700 dark:text-gray-300 mb-1">
-              Clan : <span className="font-semibold">{profile.clanName}</span>
-            </div>
-          )}
-          {profile && profile.seasonLevel !== null && (
-            <div className="text-sm text-gray-700 dark:text-gray-300 mb-4">
-              Niveau de saison : <span className="font-semibold">{profile.seasonLevel}</span>
-            </div>
-          )}
-          <div className="w-full">
-            <div className="flex flex-col gap-2">
-              <button className="w-full bg-gray-100 dark:bg-[#181926] hover:bg-gray-200 dark:hover:bg-[#23243a] rounded-lg py-2 flex items-center justify-between px-4">
-                <span className="flex items-center gap-2">
-                  <img src="/images/titan.png" alt="Titan" className="w-6 h-6" /> Titan
-                </span>
-                <span className="text-yellow-400">◆</span>
-              </button>
-              <button className="w-full bg-gray-100 dark:bg-[#181926] hover:bg-gray-200 dark:hover:bg-[#23243a] rounded-lg py-2 flex items-center justify-between px-4">
-                <span className="flex items-center gap-2">
-                  <img src="/images/hunter.png" alt="Hunter" className="w-6 h-6" /> Hunter
-                </span>
-                <span className="text-yellow-400">◆</span>
-              </button>
-              <button className="w-full bg-gray-100 dark:bg-[#181926] hover:bg-gray-200 dark:hover:bg-[#23243a] rounded-lg py-2 flex items-center justify-between px-4">
-                <span className="flex items-center gap-2">
-                  <img src="/images/warlock.png" alt="Warlock" className="w-6 h-6" /> Warlock
-                </span>
-                <span className="text-yellow-400">◆</span>
-              </button>
-            </div>
-          </div>
+          <BungieProfile accessToken={accessToken} />
         </div>
       </div>
 
@@ -211,6 +158,8 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+
+      <BungieProfile accessToken={accessToken} />
     </>
   );
 }
