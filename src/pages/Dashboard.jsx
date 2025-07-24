@@ -163,7 +163,6 @@ export default function Dashboard() {
       </div>
 
       <BungieProfile accessToken={accessToken} />
-      <BungieActivities accessToken={accessToken} />
     </>
   );
 }
