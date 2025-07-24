@@ -26,11 +26,14 @@ export default function Dashboard() {
   const [authMessage, setAuthMessage] = useState("");
   const [profile, setProfile] = useState(null);
 
+  // Récupère l'URL du backend depuis la variable d'environnement
+  const apiUrl = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get("code");
     if (code) {
-      axios.get(`https://destiny-exotic-report-v1-production.up.railway.app/auth/callback?code=${code}`)
+      axios.get(`${apiUrl}/auth/callback?code=${code}`)
         .then(res => {
           setAccessToken(res.data.access_token);
           setAuthMessage("Connexion Bungie réussie !");
@@ -38,17 +41,17 @@ export default function Dashboard() {
         })
         .catch(() => setAuthMessage("Erreur lors de l'authentification Bungie."));
     }
-  }, []);
+  }, [apiUrl]);
 
   useEffect(() => {
     if (accessToken) {
-      axios.get("https://destiny-exotic-report-v1-production.up.railway.app/api/profile", {
+      axios.get(`${apiUrl}/api/profile`, {
         headers: { Authorization: `Bearer ${accessToken}` }
       })
         .then(res => setProfile(res.data))
         .catch(() => setProfile(null));
     }
-  }, [accessToken]);
+  }, [accessToken, apiUrl]);
 
   return (
     <>
@@ -60,7 +63,7 @@ export default function Dashboard() {
           <p className="mb-6 text-gray-700 dark:text-gray-300">Track your progress in Destiny 2 exotic missions.</p>
           {!accessToken ? (
             <button
-              onClick={() => window.location.href = "https://destiny-exotic-report-v1-production.up.railway.app/auth/login"}
+              onClick={() => window.location.href = `${apiUrl}/auth/login`}
               className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded"
             >
               Se connecter avec Bungie.net
