@@ -122,7 +122,7 @@ app.get('/api/activities', async (req, res) => {
     const main = memberships[0];
 
     // Récupérer la liste des personnages
-    const profileRes = await axios.get(`https://www.bungie.net/Platform/Destiny2/${main.membershipType}/Profile/${main.membershipId}/?components=100`, {
+    const profileRes = await axios.get(`https://www.bungie.net/Platform/Destiny2/${main.membershipType}/Profile/${main.membershipId}/?components=100,200`, {
       headers: {
         'X-API-Key': process.env.BUNGIE_API_KEY,
         'Authorization': `Bearer ${accessToken}`
