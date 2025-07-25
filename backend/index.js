@@ -1,6 +1,14 @@
-// Route pour exposer la liste des missions exotiques (hash + nom) depuis le fichier activity
+
+// Use CommonJS syntax; ensure your file extension is .js and not .mjs, and your package.json ne spécifie pas "type": "module"
+const dotenv = require('dotenv');
+const express = require('express');
+const axios = require('axios');
+const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
+const app = express();
+
+// Route pour exposer la liste des missions exotiques (hash + nom) depuis le fichier activity
 app.get('/api/exotic-activities', (req, res) => {
   const filePath = path.join(__dirname, 'activity');
   fs.readFile(filePath, 'utf8', (err, data) => {
@@ -15,12 +23,6 @@ app.get('/api/exotic-activities', (req, res) => {
     }
   });
 });
-// Use CommonJS syntax; ensure your file extension is .js and not .mjs, and your package.json does not specify "type": "module"
-const dotenv = require('dotenv');
-const express = require('express');
-const axios = require('axios');
-const cors = require('cors');
-const app = express();
 
 dotenv.config();
 
