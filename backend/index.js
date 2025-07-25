@@ -128,6 +128,8 @@ app.get('/api/activities', async (req, res) => {
         'Authorization': `Bearer ${accessToken}`
       }
     });
+    // Log la structure brute pour debug
+    console.log('[BUNGIE PROFILE RAW]', JSON.stringify(profileRes.data, null, 2));
     const characters = profileRes.data?.Response?.characters?.data;
     if (!characters || typeof characters !== 'object') {
       return res.status(404).json({ error: 'Aucun personnage Destiny trouvé (structure Bungie invalide)' });
