@@ -219,6 +219,13 @@ app.get('/api/activities', async (req, res) => {
       return { ...act, activityName };
     }));
 
+    // Log détaillé pour debug : ce qui est envoyé au frontend
+    console.log('[RETOUR FRONTEND] mappedActivities (taille):', mappedActivities.length);
+    if (mappedActivities.length > 0) {
+      console.log('[RETOUR FRONTEND] Premier élément:', JSON.stringify(mappedActivities[0], null, 2));
+    } else {
+      console.log('[RETOUR FRONTEND] Aucun élément à renvoyer');
+    }
     res.json({ activities: mappedActivities });
   } catch (err) {
     console.error('[ACTIVITIES ERROR]', err.message);
