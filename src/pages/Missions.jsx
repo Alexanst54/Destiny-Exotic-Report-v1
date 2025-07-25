@@ -2,114 +2,45 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
+const API_KEY = import.meta.env.VITE_BUNGIE_API_KEY;
+
 export default function Missions() {
   const [exoticActivities, setExoticActivities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    setExoticActivities([
-      {
-        name: "Dual Destiny",
-        image: "https://www.bungie.net/img/destiny_content/pgcr/dualdestiny.jpg",
-        variants: [ { name: "Standard", hash: -2132841886 } ]
-      },
-      {
-        name: "Encore",
-        image: "https://www.bungie.net/img/destiny_content/pgcr/encore.jpg",
-        variants: [
-          { name: "Expert", hash: 655052177 },
-          { name: "Overture (Expert)", hash: -1932104431 },
-          { name: "Concerto (Expert)", hash: -1932104430 },
-          { name: "Coda (Expert)", hash: -1553027841 },
-          { name: "Standard", hash: 1550266704 },
-          { name: "Customize", hash: -1174422607 },
-          { name: "Concerto: Standard", hash: -752855492 },
-          { name: "Coda: Standard", hash: -752855491 },
-          { name: "Overture: Standard", hash: -752855489 }
-        ]
-      },
-      {
-        name: "Vox Obscura",
-        image: "https://www.bungie.net/img/destiny_content/pgcr/voxobscura.jpg",
-        variants: [
-          { name: "Standard", hash: -1626230148 },
-          { name: "Master", hash: 613120446 },
-          { name: "Expert", hash: 666172264 },
-          { name: "Normal", hash: 901429423 }
-        ]
-      },
-      {
-        name: "Zero Hour",
-        image: "https://www.bungie.net/img/destiny_content/pgcr/zerohour.jpg",
-        variants: [
-          { name: "Heroic", hash: -1563758630 },
-          { name: "Standard", hash: -933221025 },
-          { name: "Expert", hash: 1848771417 }
-        ]
-      },
-      {
-        name: "Presage",
-        image: "https://www.bungie.net/img/destiny_content/pgcr/presage.jpg",
-        variants: [
-          { name: "Standard", hash: -411671539 },
-          { name: "Expert", hash: -93120625 }
-        ]
-      },
-      {
-        name: "Operation: Seraph's Shield",
-        image: "https://www.bungie.net/img/destiny_content/pgcr/seraphsshield.jpg",
-        variants: [
-          { name: "Seraph's Shield (Expert)", hash: -1375158087 },
-          { name: "Seraph's Shield: Normal", hash: 202306511 },
-          { name: "Seraph's Shield (Legend)", hash: 995051012 },
-          { name: "Seraph's Shield: Standard", hash: 1221538367 }
-        ]
-      },
-      {
-        name: "Kell's Fall",
-        image: "https://www.bungie.net/img/destiny_content/pgcr/kellsfall.jpg",
-        variants: [
-          { name: "Standard", hash: -416696360 },
-          { name: "Diffraction", hash: -998179575 },
-          { name: "Reflection (Expert)", hash: -847719003 },
-          { name: "Expert", hash: 367562924 },
-          { name: "Distortion (Expert)", hash: 264074906 },
-          { name: "Distortion", hash: 715393254 },
-          { name: "Diffraction (Expert)", hash: 1044034163 },
-          { name: "Reflection", hash: 1583447699 },
-          { name: "Customize", hash: 1948474391 }
-        ]
-      },
-      {
-        name: "Starcrossed",
-        image: "https://www.bungie.net/img/destiny_content/pgcr/starcrossed.jpg",
-        variants: [
-          { name: "Legend", hash: 1013336498 },
-          { name: "Standard", hash: 196691221 },
-          { name: "Normal", hash: 896748846 },
-          { name: "Customize", hash: 1768099736 }
-        ]
-      },
-      {
-        name: "The Whisper",
-        image: "https://www.bungie.net/img/destiny_content/pgcr/whisper.jpg",
-        variants: [
-          { name: "Standard", hash: 74501540 },
-          { name: "Expert", hash: -423446509 },
-          { name: "Customize", hash: 576782083 },
-          { name: "Heroic", hash: 1099555105 }
-        ]
-      },
-      {
-        name: "Harbinger",
-        image: "https://www.bungie.net/img/destiny_content/pgcr/harbinger.jpg",
-        variants: [
-          { name: "Standard", hash: 1738383283 }
-        ]
-      }
-    ]);
-    setLoading(false);
+    // Liste des missions exotiques avec hash textuel et hash numérique principal (pour l'image)
+    const missions = [
+      { hash: "dualdestiny", mainHash: -2132841886, variants: [ { name: "Standard", hash: -2132841886 } ] },
+      { hash: "encore", mainHash: 1550266704, variants: [ { name: "Standard", hash: 1550266704 } ] },
+      { hash: "voxobscura", mainHash: -1626230148, variants: [ { name: "Standard", hash: -1626230148 } ] },
+      { hash: "zerohour", mainHash: -933221025, variants: [ { name: "Standard", hash: -933221025 } ] },
+      { hash: "presage", mainHash: -411671539, variants: [ { name: "Standard", hash: -411671539 } ] },
+      { hash: "seraphshield", mainHash: 1221538367, variants: [ { name: "Seraph's Shield: Standard", hash: 1221538367 } ] },
+      { hash: "kellsfall", mainHash: -416696360, variants: [ { name: "Standard", hash: -416696360 } ] },
+      { hash: "starcrossed", mainHash: 196691221, variants: [ { name: "Standard", hash: 196691221 } ] },
+      { hash: "whisper", mainHash: 74501540, variants: [ { name: "Standard", hash: 74501540 } ] },
+      { hash: "harbinger", mainHash: 1738383283, variants: [ { name: "Standard", hash: 1738383283 } ] },
+    ];
+
+    async function fetchImages() {
+      const results = await Promise.all(missions.map(async (mission) => {
+        try {
+          const res = await axios.get(`https://www.bungie.net/Platform/Destiny2/Manifest/DestinyActivityDefinition/${mission.mainHash}/`, {
+            headers: { 'X-API-Key': API_KEY }
+          });
+          const img = res.data.Response?.pgcrImage ? `https://www.bungie.net${res.data.Response.pgcrImage}` : null;
+          const name = res.data.Response?.displayProperties?.name || mission.hash;
+          return { ...mission, image: img, name };
+        } catch {
+          return { ...mission, image: null, name: mission.hash };
+        }
+      }));
+      setExoticActivities(results);
+      setLoading(false);
+    }
+    fetchImages();
   }, []);
 
   return (
