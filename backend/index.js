@@ -121,8 +121,22 @@ app.get('/api/activities', async (req, res) => {
     }
     const main = memberships[0];
 
-    // Récupérer les activités
-    const activitiesRes = await axios.get(`https://www.bungie.net/Platform/Destiny2/${main.membershipType}/Account/${main.membershipId}/ActivityHistory/?count=10`, {
+    // Récupérer la liste des personnages
+    const profileRes = await axios.get(`https://www.bungie.net/Platform/Destiny2/${main.membershipType}/Profile/${main.membershipId}/?components=100`, {
+      headers: {
+        'X-API-Key': process.env.BUNGIE_API_KEY,
+        'Authorization': `Bearer ${accessToken}`
+      }
+    });
+    const characters = profileRes.data.Response.characters.data;
+    const characterIds = Object.keys(characters);
+    if (!characterIds.length) {
+      return res.status(404).json({ error: 'Aucun personnage Destiny trouvé' });
+    }
+    const characterId = characterIds[0]; // Prend le premier personnage
+
+    // Récupérer les activités du personnage
+    const activitiesRes = await axios.get(`https://www.bungie.net/Platform/Destiny2/${main.membershipType}/Account/${main.membershipId}/Character/${characterId}/Stats/Activities/?count=10`, {
       headers: {
         'X-API-Key': process.env.BUNGIE_API_KEY,
         'Authorization': `Bearer ${accessToken}`
