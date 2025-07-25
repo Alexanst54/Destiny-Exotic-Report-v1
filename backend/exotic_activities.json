@@ -1,72 +1,250 @@
 [
   {
-    "mission": "dualdestiny",
-    "hash": "648675065",
-    "name": "Exotic mission \"Derealize\"",
-    "description": "Investigate the source of a mysterious Taken power—and claim it before anyone else can.",
-    "pgcrImage": "/img/destiny_content/pgcr/s26_exotic.jpg"
+    "mission": "Encore: Customize",
+    "hash": "3120544689",
+    "name": "Encore: Customize",
+    "description": "",
+    "pgcrImage": null,
+    "log": "Erreur ou non trouvé dans le manifest Bungie API: Request failed with status code 403"
   },
   {
-    "mission": "encore",
+    "mission": "Encore: Standard",
+    "hash": "1550266704",
+    "name": "Encore: Standard",
+    "description": "",
+    "pgcrImage": null,
+    "log": "Erreur ou non trouvé dans le manifest Bungie API: Request failed with status code 403"
+  },
+  {
+    "mission": "Encore (Expert)",
     "hash": "655052177",
     "name": "Encore (Expert)",
-    "description": "Explore the strange structures at the core of Nessus, converted by the Vex at the Conductor's command.",
-    "pgcrImage": "/img/theme/destiny/bgs/pgcrs/placeholder.jpg"
+    "description": "",
+    "pgcrImage": null,
+    "log": "Erreur ou non trouvé dans le manifest Bungie API: Request failed with status code 403"
   },
   {
-    "mission": "voxobscura",
-    "hash": "613120446",
-    "name": "Vox Obscura (Master)",
-    "description": "Despite the Vanguard's recent victories, a dissident Psion faction continues to release Darkness-inspired propaganda. Return to Mars and learn how far the conspiracy goes.",
-    "pgcrImage": "/img/destiny_content/pgcr/exotic_mission_chrome.jpg"
+    "mission": "Encore: Coda: Standard",
+    "hash": "3542111805",
+    "name": "Encore: Coda: Standard",
+    "description": "",
+    "pgcrImage": null,
+    "log": "Erreur ou non trouvé dans le manifest Bungie API: Request failed with status code 403"
   },
   {
-    "mission": "zerohour",
-    "hash": "1848771417",
-    "name": "Zero Hour (Expert)",
-    "description": "Race against the clock to stop House Salvation agents from stealing a dangerous weapon from the Old Tower.",
-    "pgcrImage": "/img/destiny_content/pgcr/zero-hour.jpg"
+    "mission": "Encore: Concerto (Expert)",
+    "hash": "2362862866",
+    "name": "Encore: Concerto (Expert)",
+    "description": "",
+    "pgcrImage": null,
+    "log": "Erreur ou non trouvé dans le manifest Bungie API: Request failed with status code 403"
   },
   {
-    "mission": "presage",
-    "hash": "2124066889",
-    "name": "Exotic Quest: Presage: Normal",
-    "description": "Jump coordinates matching an errant distress signal.",
-    "pgcrImage": "/img/destiny_content/pgcr/exotic_quest_presage.jpg"
+    "mission": "Encore: Concerto: Standard",
+    "hash": "3542111804",
+    "name": "Encore: Concerto: Standard",
+    "description": "",
+    "pgcrImage": null,
+    "log": "Erreur ou non trouvé dans le manifest Bungie API: Request failed with status code 403"
   },
   {
-    "mission": "seraphshield",
-    "hash": "202306511",
-    "name": "Operation: Seraph's Shield: Normal",
-    "description": "Infiltrate Seraph Station in Earth's orbit to plant a virus in the Warsat network.",
-    "pgcrImage": "/img/destiny_content/pgcr/season_19_exotic_mission.jpg"
+    "mission": "Encore: Overture: Standard",
+    "hash": "3542111807",
+    "name": "Encore: Overture: Standard",
+    "description": "",
+    "pgcrImage": null,
+    "log": "Erreur ou non trouvé dans le manifest Bungie API: Request failed with status code 403"
   },
   {
-    "mission": "kellsfall",
+    "mission": "Encore: Overture (Expert)",
+    "hash": "2362862865",
+    "name": "Encore: Overture (Expert)",
+    "description": "",
+    "pgcrImage": null,
+    "log": "Erreur ou non trouvé dans le manifest Bungie API: Request failed with status code 403"
+  },
+  {
+    "mission": "//node.ovrd.AVALON//",
+    "hash": "509188661",
+    "name": "//node.ovrd.AVALON//",
+    "description": "",
+    "pgcrImage": null,
+    "log": "Erreur ou non trouvé dans le manifest Bungie API: Request failed with status code 403"
+  },
+  {
+    "mission": "//node.ovrd.AVALON//",
+    "hash": "3755529435",
+    "name": "//node.ovrd.AVALON//",
+    "description": "",
+    "pgcrImage": null,
+    "log": "Erreur ou non trouvé dans le manifest Bungie API: Request failed with status code 403"
+  },
+  {
+    "mission": "Operation: Seraph's Shield: Standard",
+    "hash": "1221538367",
+    "name": "Operation: Seraph's Shield: Standard",
+    "description": "",
+    "pgcrImage": null,
+    "log": "Erreur ou non trouvé dans le manifest Bungie API: Request failed with status code 403"
+  },
+  {
+    "mission": "Operation: Seraph's Shield (Expert)",
+    "hash": "2919809209",
+    "name": "Operation: Seraph's Shield (Expert)",
+    "description": "",
+    "pgcrImage": null,
+    "log": "Erreur ou non trouvé dans le manifest Bungie API: Request failed with status code 403"
+  },
+  {
+    "mission": "Kell's Fall",
+    "hash": "3212612420",
+    "name": "Kell's Fall",
+    "description": "",
+    "pgcrImage": null,
+    "log": "Erreur ou non trouvé dans le manifest Bungie API: Request failed with status code 403"
+  },
+  {
+    "mission": "Kell's Fall (Expert)",
     "hash": "133833536",
     "name": "Kell's Fall (Expert)",
-    "description": "Enter Fikrul's Revenant Fortress in the Tangled Shore, where dark reflections make it difficult to discern illusion from reality.",
-    "pgcrImage": "/img/destiny_content/pgcr/fikrul_keep.jpg"
+    "description": "",
+    "pgcrImage": null,
+    "log": "Erreur ou non trouvé dans le manifest Bungie API: Request failed with status code 403"
   },
   {
-    "mission": "starcrossed",
-    "hash": "196691221",
-    "name": "Starcrossed",
-    "description": "Within the Black Garden, the Sol Divisive toil endlessly, systematically shutting down potential futures. With Riven's blessing, it's time to shut them down.",
-    "pgcrImage": "/img/destiny_content/pgcr/mission_starcrossed.jpg"
+    "mission": "Kell's Fall: Diffraction",
+    "hash": "3296787721",
+    "name": "Kell's Fall: Diffraction",
+    "description": "",
+    "pgcrImage": null,
+    "log": "Erreur ou non trouvé dans le manifest Bungie API: Request failed with status code 403"
   },
   {
-    "mission": "whisper",
-    "hash": "74501540",
-    "name": "The Whisper",
-    "description": "The Whisper",
-    "pgcrImage": "/img/theme/destiny/bgs/pgcrs/placeholder.jpg"
+    "mission": "Kell's Fall: Distortion (Expert)",
+    "hash": "264074906",
+    "name": "Kell's Fall: Distortion (Expert)",
+    "description": "",
+    "pgcrImage": null,
+    "log": "Erreur ou non trouvé dans le manifest Bungie API: Request failed with status code 403"
   },
   {
-    "mission": "harbinger",
-    "hash": "1738383283",
-    "name": "Harbinger",
-    "description": "Embody the will of the Traveler and hunt those who would serve the Darkness.",
-    "pgcrImage": "/img/destiny_content/pgcr/edz_exotic_harbinger.jpg"
+    "mission": "Kell's Fall: Distortion (Expert)",
+    "hash": "264074906",
+    "name": "Kell's Fall: Distortion (Expert)",
+    "description": "",
+    "pgcrImage": null,
+    "log": "Erreur ou non trouvé dans le manifest Bungie API: Request failed with status code 403"
+  },
+  {
+    "mission": "Kell's Fall: Distortion (Expert)",
+    "hash": "264074906",
+    "name": "Kell's Fall: Distortion (Expert)",
+    "description": "",
+    "pgcrImage": null,
+    "log": "Erreur ou non trouvé dans le manifest Bungie API: Request failed with status code 403"
+  },
+  {
+    "mission": "Kell's Fall: Distortion",
+    "hash": "715393254",
+    "name": "Kell's Fall: Distortion",
+    "description": "",
+    "pgcrImage": null,
+    "log": "Erreur ou non trouvé dans le manifest Bungie API: Request failed with status code 403"
+  },
+  {
+    "mission": "Kell's Fall: Reflection",
+    "hash": "1583447699",
+    "name": "Kell's Fall: Reflection",
+    "description": "",
+    "pgcrImage": null,
+    "log": "Erreur ou non trouvé dans le manifest Bungie API: Request failed with status code 403"
+  },
+  {
+    "mission": "The Whisper: Customize",
+    "hash": "576782083",
+    "name": "The Whisper: Customize",
+    "description": "",
+    "pgcrImage": null,
+    "log": "Erreur ou non trouvé dans le manifest Bungie API: Request failed with status code 403"
+  },
+  {
+    "mission": "The Whisper: Standard",
+    "hash": "3743446313",
+    "name": "The Whisper: Standard",
+    "description": "",
+    "pgcrImage": null,
+    "log": "Erreur ou non trouvé dans le manifest Bungie API: Request failed with status code 403"
+  },
+  {
+    "mission": "The Whisper (Expert)",
+    "hash": "3871520787",
+    "name": "The Whisper (Expert)",
+    "description": "",
+    "pgcrImage": null,
+    "log": "Erreur ou non trouvé dans le manifest Bungie API: Request failed with status code 403"
+  },
+  {
+    "mission": "Presage: Standard",
+    "hash": "3883295757",
+    "name": "Presage: Standard",
+    "description": "",
+    "pgcrImage": null,
+    "log": "Erreur ou non trouvé dans le manifest Bungie API: Request failed with status code 403"
+  },
+  {
+    "mission": "Presage (Expert)",
+    "hash": "4201846671",
+    "name": "Presage (Expert)",
+    "description": "",
+    "pgcrImage": null,
+    "log": "Erreur ou non trouvé dans le manifest Bungie API: Request failed with status code 403"
+  },
+  {
+    "mission": "Exotic mission \"Derealize\"",
+    "hash": "648675065",
+    "name": "Exotic mission \"Derealize\"",
+    "description": "",
+    "pgcrImage": null,
+    "log": "Erreur ou non trouvé dans le manifest Bungie API: Request failed with status code 403"
+  },
+  {
+    "mission": "Zero Hour: Standard",
+    "hash": "3361746271",
+    "name": "Zero Hour: Standard",
+    "description": "",
+    "pgcrImage": null,
+    "log": "Erreur ou non trouvé dans le manifest Bungie API: Request failed with status code 403"
+  },
+  {
+    "mission": "Zero Hour (Expert)",
+    "hash": "1848771417",
+    "name": "Zero Hour (Expert)",
+    "description": "",
+    "pgcrImage": null,
+    "log": "Erreur ou non trouvé dans le manifest Bungie API: Request failed with status code 403"
+  },
+  {
+    "mission": "Starcrossed: Normal",
+    "hash": "896748846",
+    "name": "Starcrossed: Normal",
+    "description": "",
+    "pgcrImage": null,
+    "log": "Erreur ou non trouvé dans le manifest Bungie API: Request failed with status code 403"
+  },
+  {
+    "mission": "Starcrossed (Legend)",
+    "hash": "1013336498",
+    "name": "Starcrossed (Legend)",
+    "description": "",
+    "pgcrImage": null,
+    "log": "Erreur ou non trouvé dans le manifest Bungie API: Request failed with status code 403"
+  },
+  {
+    "mission": "Vox Obscura: Standard",
+    "hash": "2668737148",
+    "name": "Vox Obscura: Standard",
+    "description": "",
+    "pgcrImage": null,
+    "log": "Erreur ou non trouvé dans le manifest Bungie API: Request failed with status code 403"
   }
 ]
