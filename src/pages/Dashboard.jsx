@@ -1,17 +1,3 @@
-  // Debug visuel : nombre d'activités récupérées et filtrées
-  const [allActivitiesCount, setAllActivitiesCount] = useState(0);
-  const [allActivitiesRaw, setAllActivitiesRaw] = useState([]);
-  useEffect(() => {
-    if (!accessToken || !exoticHashes.size) return;
-    axios
-      .get(`${API_URL}/api/activities`, {
-        headers: { Authorization: `Bearer ${accessToken}` }
-      })
-      .then(res => {
-        setAllActivitiesCount((res.data.activities || []).length);
-        setAllActivitiesRaw(res.data.activities || []);
-      });
-  }, [accessToken, exoticHashes]);
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 // Pour filtrer les exotiques
