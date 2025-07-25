@@ -4,48 +4,33 @@ import { Link } from "react-router-dom";
 
 const API_KEY = import.meta.env.VITE_BUNGIE_API_KEY;
 
+if (!API_KEY) {
+  // Affiche une alerte claire si la clé API n'est pas définie
+  // eslint-disable-next-line no-alert
+  alert("Erreur : la clé API Bungie n'est pas définie. Ajoutez VITE_BUNGIE_API_KEY=... dans votre fichier .env et redémarrez le serveur Vite.");
+}
+
 export default function Missions() {
   const [exoticActivities, setExoticActivities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Liste des missions exotiques avec hash textuel et hash numérique principal (pour l'image)
-    const missions = [
-      { hash: "dualdestiny", mainHash: -2132841886, variants: [ { name: "Standard", hash: -2132841886 } ] },
-      { hash: "encore", mainHash: 1550266704, variants: [ { name: "Standard", hash: 1550266704 } ] },
-      { hash: "voxobscura", mainHash: -1626230148, variants: [ { name: "Standard", hash: -1626230148 } ] },
-      { hash: "zerohour", mainHash: -933221025, variants: [ { name: "Standard", hash: -933221025 } ] },
-      { hash: "presage", mainHash: -411671539, variants: [ { name: "Standard", hash: -411671539 } ] },
-      { hash: "seraphshield", mainHash: 1221538367, variants: [ { name: "Seraph's Shield: Standard", hash: 1221538367 } ] },
-      { hash: "kellsfall", mainHash: -416696360, variants: [ { name: "Standard", hash: -416696360 } ] },
-      { hash: "starcrossed", mainHash: 196691221, variants: [ { name: "Standard", hash: 196691221 } ] },
-      { hash: "whisper", mainHash: 74501540, variants: [ { name: "Standard", hash: 74501540 } ] },
-      { hash: "harbinger", mainHash: 1738383283, variants: [ { name: "Standard", hash: 1738383283 } ] },
-    ];
-
-    async function fetchImages() {
+    // Charge dynamiquement la liste des missions exotiques depuis le backend
+    async function fetchActivities() {
       try {
-        const results = await Promise.all(missions.map(async (mission) => {
-          try {
-            const res = await axios.get(`https://www.bungie.net/Platform/Destiny2/Manifest/DestinyActivityDefinition/${mission.mainHash}/`, {
-              headers: { 'X-API-Key': API_KEY }
-            });
-            const img = res.data.Response?.pgcrImage ? `https://www.bungie.net${res.data.Response.pgcrImage}` : null;
-            const name = res.data.Response?.displayProperties?.name || mission.hash;
-            return { ...mission, image: img, name };
-          } catch {
-            return { ...mission, image: null, name: mission.hash };
-          }
-        }));
-        setExoticActivities(results);
+        // Utilise la nouvelle route API pour récupérer la liste à jour
+        const res = await axios.get("/api/exotic-activities");
+        // Le backend fournit déjà toutes les infos nécessaires (nom, image, hash, etc.)
+        const activities = Array.isArray(res.data) ? res.data : (res.data.activities || []);
+        setExoticActivities(activities);
       } catch (err) {
         setError("Erreur lors de la récupération des missions exotiques.");
       } finally {
         setLoading(false);
       }
     }
-    fetchImages();
+    fetchActivities();
   }, []);
 
   return (
@@ -63,23 +48,19 @@ export default function Missions() {
         </thead>
         <tbody>
           {!loading && !error && exoticActivities.map((mission, idx) => (
-            <tr key={idx} className="bg-gray-100 dark:bg-[#23243a] rounded-lg">
+            <tr key={mission.hash || idx} className="bg-gray-100 dark:bg-[#23243a] rounded-lg">
               <td className="py-3 px-2 font-bold text-yellow-600 dark:text-yellow-400">
-                <Link to={`/missions/${mission.variants && mission.variants[0] && mission.variants[0].hash ? mission.variants[0].hash : mission.name.toLowerCase().replace(/[^a-z0-9]/g, '')}`}>{mission.name}</Link>
+                <Link to={`/missions/${mission.hash}`}>{mission.name}</Link>
               </td>
               <td className="py-3 px-2">
-                <img src={mission.image || "/images/unknown.png"} alt={mission.name} className="w-32 h-20 object-cover rounded" onError={e => { e.target.onerror = null; e.target.src = "/images/unknown.png"; }} />
+                <img src={mission.pgcrImage || "/images/unknown.png"} alt={mission.name} className="w-32 h-20 object-cover rounded" onError={e => { e.target.onerror = null; e.target.src = "/images/unknown.png"; }} />
               </td>
               <td className="py-3 px-2">
-                {mission.variants && mission.variants.length > 0 ? (
-                  <ul className="flex flex-wrap gap-2">
-                    {mission.variants.map((variant, vIdx) => (
-                      <li key={vIdx} className="bg-gray-200 dark:bg-[#181926] px-2 py-1 rounded text-xs text-gray-900 dark:text-gray-200">
-                        {variant.name}
-                      </li>
-                    ))}
-                  </ul>
-                ) : <span className="italic text-gray-400">Aucun</span>}
+                {/* Si tu veux afficher d'autres infos, ajoute ici */}
+                <span className="italic text-gray-400">{mission.hash}</span>
+                {mission.log && (
+                  <div className="text-xs text-red-400 mt-1">{mission.log}</div>
+                )}
               </td>
             </tr>
           ))}
