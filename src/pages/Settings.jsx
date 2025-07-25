@@ -1,12 +1,32 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-export default function Settings() {
+
+// Liste des thèmes disponibles
+  const THEMES = [
+    { value: "dark", label: "Sombre (par défaut)" },
+    { value: "light", label: "Clair" },
+    { value: "theme-witchqueen", label: "The Witch Queen" },
+    { value: "theme-finalshape", label: "The Final Shape" },
+    { value: "theme-lightfall", label: "Lightfall" },
+    { value: "theme-edgeoffate", label: "The Edge of Fate" },
+  ];
+
   const [theme, setTheme] = useState("dark");
 
-  // Simule le changement de thème (à adapter selon gestion globale du thème)
+  useEffect(() => {
+    // Retire toutes les classes de thème custom
+    document.body.classList.remove("theme-witchqueen", "theme-finalshape", "theme-lightfall", "theme-edgeoffate", "dark", "light");
+    if (theme === "dark" || theme === "light") {
+      document.documentElement.classList.toggle("dark", theme === "dark");
+      document.documentElement.classList.toggle("light", theme === "light");
+    } else {
+      document.body.classList.add(theme);
+      document.documentElement.classList.remove("dark", "light");
+    }
+  }, [theme]);
+
   const handleThemeChange = (e) => {
     setTheme(e.target.value);
-    document.documentElement.classList.toggle("dark", e.target.value === "dark");
   };
 
   const handleLogout = () => {
@@ -26,8 +46,9 @@ export default function Settings() {
             onChange={handleThemeChange}
             className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-[#181926] text-gray-900 dark:text-gray-200 text-base outline-none"
           >
-            <option value="dark">Sombre</option>
-            <option value="light">Clair</option>
+            {THEMES.map(opt => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
+            ))}
           </select>
         </div>
         <div className="flex flex-col items-center mt-4">

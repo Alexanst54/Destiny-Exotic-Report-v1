@@ -1,3 +1,91 @@
+/* THEME: The Edge of Fate */
+.theme-edgeoffate {
+  background: linear-gradient(135deg, #F2C4DE 0%, #D984AC 25%, #523659 50%, #342C40 75%, #4E458C 100%) !important;
+  color: #f2e9f2 !important;
+}
+.theme-edgeoffate h1, .theme-edgeoffate h2, .theme-edgeoffate h3, .theme-edgeoffate h4, .theme-edgeoffate h5, .theme-edgeoffate h6 {
+  color: #D984AC !important;
+  text-shadow: 0 2px 8px #523659;
+}
+.theme-edgeoffate .card, .theme-edgeoffate .rounded-2xl {
+  background: rgba(52, 44, 64, 0.85);
+  color: #f2e9f2;
+}
+.theme-edgeoffate .variant-btn {
+  background: #523659;
+  color: #F2C4DE;
+  border: 1px solid #4E458C;
+}
+.theme-edgeoffate .variant-btn:hover {
+  background: #D984AC;
+  color: #342C40;
+}
+/* THEME: Lightfall */
+.theme-lightfall {
+  background: linear-gradient(135deg, #F2ACB2 0%, #BF657D 25%, #110E26 50%, #324373 75%, #3671BF 100%) !important;
+  color: #f2e9f2 !important;
+}
+.theme-lightfall h1, .theme-lightfall h2, .theme-lightfall h3, .theme-lightfall h4, .theme-lightfall h5, .theme-lightfall h6 {
+  color: #3671BF !important;
+  text-shadow: 0 2px 8px #110E26;
+}
+.theme-lightfall .card, .theme-lightfall .rounded-2xl {
+  background: rgba(17, 14, 38, 0.85);
+  color: #f2e9f2;
+}
+.theme-lightfall .variant-btn {
+  background: #324373;
+  color: #F2ACB2;
+  border: 1px solid #3671BF;
+}
+.theme-lightfall .variant-btn:hover {
+  background: #3671BF;
+  color: #110E26;
+}
+/* THEME: The Final Shape */
+.theme-finalshape {
+  background: linear-gradient(135deg, #1A2526 0%, #40403F 25%, #8C402E 50%, #F2B5A7 75%, #8C3B3B 100%) !important;
+  color: #f2e9e7 !important;
+}
+.theme-finalshape h1, .theme-finalshape h2, .theme-finalshape h3, .theme-finalshape h4, .theme-finalshape h5, .theme-finalshape h6 {
+  color: #F2B5A7 !important;
+  text-shadow: 0 2px 8px #8C3B3B;
+}
+.theme-finalshape .card, .theme-finalshape .rounded-2xl {
+  background: rgba(26, 37, 38, 0.85);
+  color: #f2e9e7;
+}
+.theme-finalshape .variant-btn {
+  background: #40403F;
+  color: #F2B5A7;
+  border: 1px solid #8C402E;
+}
+.theme-finalshape .variant-btn:hover {
+  background: #F2B5A7;
+  color: #8C3B3B;
+}
+/* THEME: The Witch Queen */
+.theme-witchqueen {
+  background: linear-gradient(135deg, #3A1F73 0%, #033159 25%, #027353 50%, #0AA67A 75%, #592608 100%) !important;
+  color: #f3e9ff !important;
+}
+.theme-witchqueen h1, .theme-witchqueen h2, .theme-witchqueen h3, .theme-witchqueen h4, .theme-witchqueen h5, .theme-witchqueen h6 {
+  color: #0AA67A !important;
+  text-shadow: 0 2px 8px #3A1F73;
+}
+.theme-witchqueen .card, .theme-witchqueen .rounded-2xl {
+  background: rgba(34, 31, 60, 0.85);
+  color: #f3e9ff;
+}
+.theme-witchqueen .variant-btn {
+  background: #033159;
+  color: #0AA67A;
+  border: 1px solid #027353;
+}
+.theme-witchqueen .variant-btn:hover {
+  background: #0AA67A;
+  color: #033159;
+}
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
