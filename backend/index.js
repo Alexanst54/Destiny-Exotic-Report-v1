@@ -128,7 +128,10 @@ app.get('/api/activities', async (req, res) => {
         'Authorization': `Bearer ${accessToken}`
       }
     });
-    const characters = profileRes.data.Response.characters.data;
+    const characters = profileRes.data?.Response?.characters?.data;
+    if (!characters || typeof characters !== 'object') {
+      return res.status(404).json({ error: 'Aucun personnage Destiny trouvé (structure Bungie invalide)' });
+    }
     const characterIds = Object.keys(characters);
     if (!characterIds.length) {
       return res.status(404).json({ error: 'Aucun personnage Destiny trouvé' });
