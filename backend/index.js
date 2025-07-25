@@ -122,12 +122,18 @@ app.get('/api/activities', async (req, res) => {
     const main = memberships[0];
 
     // Récupérer la liste des personnages
-    const profileRes = await axios.get(`https://www.bungie.net/Platform/Destiny2/${main.membershipType}/Profile/${main.membershipId}/?components=100,200`, {
-      headers: {
-        'X-API-Key': process.env.BUNGIE_API_KEY,
-        'Authorization': `Bearer ${accessToken}`
-      }
-    });
+    let profileRes;
+    try {
+      profileRes = await axios.get(`https://www.bungie.net/Platform/Destiny2/${main.membershipType}/Profile/${main.membershipId}/?components=100,200`, {
+        headers: {
+          'X-API-Key': process.env.BUNGIE_API_KEY,
+          'Authorization': `Bearer ${accessToken}`
+        }
+      });
+    } catch (e) {
+      console.error('[BUNGIE PROFILE ERROR]', e.message);
+      return res.status(500).json({ error: 'Erreur lors de la récupération du profil Bungie', details: e.message });
+    }
     // Log la structure brute pour debug
     console.log('[BUNGIE PROFILE RAW]', JSON.stringify(profileRes.data, null, 2));
     const characters = profileRes.data?.Response?.characters?.data;
@@ -148,20 +154,25 @@ app.get('/api/activities', async (req, res) => {
       1583447699, 1948474391, 1013336498, 196691221, 896748846, 1768099736, 74501540, -423446509, 576782083, 1099555105, 1738383283
     ];
 
-
     // Pagination pour récupérer toutes les activités disponibles (par pages de 250)
     let allActivities = [];
     let page = 0;
     const pageSize = 250;
     let keepGoing = true;
     while (keepGoing) {
-      const activitiesRes = await axios.get(`https://www.bungie.net/Platform/Destiny2/${main.membershipType}/Account/${main.membershipId}/Character/${characterId}/Stats/Activities/?count=${pageSize}&page=${page}`,
-        {
-          headers: {
-            'X-API-Key': process.env.BUNGIE_API_KEY,
-            'Authorization': `Bearer ${accessToken}`
-          }
-        });
+      let activitiesRes;
+      try {
+        activitiesRes = await axios.get(`https://www.bungie.net/Platform/Destiny2/${main.membershipType}/Account/${main.membershipId}/Character/${characterId}/Stats/Activities/?count=${pageSize}&page=${page}`,
+          {
+            headers: {
+              'X-API-Key': process.env.BUNGIE_API_KEY,
+              'Authorization': `Bearer ${accessToken}`
+            }
+          });
+      } catch (e) {
+        console.error(`[PAGINATION] Erreur page ${page} :`, e.message);
+        break;
+      }
       const activities = activitiesRes.data.Response.activities || [];
       console.log(`[PAGINATION] Page ${page} : ${activities.length} activités récupérées`);
       allActivities = allActivities.concat(activities);
@@ -188,6 +199,7 @@ app.get('/api/activities', async (req, res) => {
         });
         activityName = defRes.data.Response?.displayProperties?.name || null;
       } catch (e) {
+        console.error(`[ACTIVITY DEF ERROR] ${act.activityDetails.referenceId}:`, e.message);
         activityName = null;
       }
       return { ...act, activityName };
@@ -196,7 +208,7 @@ app.get('/api/activities', async (req, res) => {
     res.json({ activities: mappedActivities });
   } catch (err) {
     console.error('[ACTIVITIES ERROR]', err.message);
-    res.status(500).json({ error: 'Erreur lors de la récupération des activités Bungie' });
+    res.status(500).json({ error: 'Erreur lors de la récupération des activités Bungie', details: err.message });
   }
 });
 

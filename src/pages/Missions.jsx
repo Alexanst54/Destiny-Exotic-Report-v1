@@ -25,20 +25,25 @@ export default function Missions() {
     ];
 
     async function fetchImages() {
-      const results = await Promise.all(missions.map(async (mission) => {
-        try {
-          const res = await axios.get(`https://www.bungie.net/Platform/Destiny2/Manifest/DestinyActivityDefinition/${mission.mainHash}/`, {
-            headers: { 'X-API-Key': API_KEY }
-          });
-          const img = res.data.Response?.pgcrImage ? `https://www.bungie.net${res.data.Response.pgcrImage}` : null;
-          const name = res.data.Response?.displayProperties?.name || mission.hash;
-          return { ...mission, image: img, name };
-        } catch {
-          return { ...mission, image: null, name: mission.hash };
-        }
-      }));
-      setExoticActivities(results);
-      setLoading(false);
+      try {
+        const results = await Promise.all(missions.map(async (mission) => {
+          try {
+            const res = await axios.get(`https://www.bungie.net/Platform/Destiny2/Manifest/DestinyActivityDefinition/${mission.mainHash}/`, {
+              headers: { 'X-API-Key': API_KEY }
+            });
+            const img = res.data.Response?.pgcrImage ? `https://www.bungie.net${res.data.Response.pgcrImage}` : null;
+            const name = res.data.Response?.displayProperties?.name || mission.hash;
+            return { ...mission, image: img, name };
+          } catch {
+            return { ...mission, image: null, name: mission.hash };
+          }
+        }));
+        setExoticActivities(results);
+      } catch (err) {
+        setError("Erreur lors de la récupération des missions exotiques.");
+      } finally {
+        setLoading(false);
+      }
     }
     fetchImages();
   }, []);
@@ -63,7 +68,7 @@ export default function Missions() {
                 <Link to={`/missions/${mission.variants && mission.variants[0] && mission.variants[0].hash ? mission.variants[0].hash : mission.name.toLowerCase().replace(/[^a-z0-9]/g, '')}`}>{mission.name}</Link>
               </td>
               <td className="py-3 px-2">
-                <img src={mission.image} alt={mission.name} className="w-32 h-20 object-cover rounded" />
+                <img src={mission.image || "/images/unknown.png"} alt={mission.name} className="w-32 h-20 object-cover rounded" onError={e => { e.target.onerror = null; e.target.src = "/images/unknown.png"; }} />
               </td>
               <td className="py-3 px-2">
                 {mission.variants && mission.variants.length > 0 ? (
