@@ -148,7 +148,23 @@ app.get('/api/activities', async (req, res) => {
       }
     });
 
-    res.json({ activities: activitiesRes.data.Response.activities });
+    const activities = activitiesRes.data.Response.activities || [];
+
+    // Pour chaque activité, récupérer le nom via DestinyActivityDefinition
+    const mappedActivities = await Promise.all(activities.map(async (act) => {
+      let activityName = null;
+      try {
+        const defRes = await axios.get(`https://www.bungie.net/Platform/Destiny2/Manifest/DestinyActivityDefinition/${act.activityDetails.referenceId}/`, {
+          headers: { 'X-API-Key': process.env.BUNGIE_API_KEY }
+        });
+        activityName = defRes.data.Response?.displayProperties?.name || null;
+      } catch (e) {
+        activityName = null;
+      }
+      return { ...act, activityName };
+    }));
+
+    res.json({ activities: mappedActivities });
   } catch (err) {
     console.error('[ACTIVITIES ERROR]', err.message);
     res.status(500).json({ error: 'Erreur lors de la récupération des activités Bungie' });
