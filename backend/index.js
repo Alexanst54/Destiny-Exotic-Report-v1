@@ -1,3 +1,20 @@
+// Route pour exposer la liste des missions exotiques (hash + nom) depuis le fichier activity
+const path = require('path');
+const fs = require('fs');
+app.get('/api/exotic-activities', (req, res) => {
+  const filePath = path.join(__dirname, 'activity');
+  fs.readFile(filePath, 'utf8', (err, data) => {
+    if (err) {
+      return res.status(500).json({ error: 'Impossible de lire le fichier activity', details: err.message });
+    }
+    try {
+      const json = JSON.parse(data);
+      res.json(json);
+    } catch (e) {
+      res.status(500).json({ error: 'Fichier activity invalide', details: e.message });
+    }
+  });
+});
 // Use CommonJS syntax; ensure your file extension is .js and not .mjs, and your package.json does not specify "type": "module"
 const dotenv = require('dotenv');
 const express = require('express');
