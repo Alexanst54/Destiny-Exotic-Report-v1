@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 export default function Missions() {
   const [exoticActivities, setExoticActivities] = useState([]);
@@ -127,7 +128,9 @@ export default function Missions() {
         <tbody>
           {!loading && !error && exoticActivities.map((mission, idx) => (
             <tr key={idx} className="bg-gray-100 dark:bg-[#23243a] rounded-lg">
-              <td className="py-3 px-2 font-bold text-yellow-600 dark:text-yellow-400">{mission.name}</td>
+              <td className="py-3 px-2 font-bold text-yellow-600 dark:text-yellow-400">
+                <Link to={`/missions/${mission.variants && mission.variants[0] && mission.variants[0].hash ? mission.variants[0].hash : mission.name.toLowerCase().replace(/[^a-z0-9]/g, '')}`}>{mission.name}</Link>
+              </td>
               <td className="py-3 px-2">
                 <img src={mission.image} alt={mission.name} className="w-32 h-20 object-cover rounded" />
               </td>

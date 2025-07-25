@@ -177,6 +177,7 @@ app.get('/api/activities', async (req, res) => {
 
     // Filtrer pour ne garder que les activités exotiques
     const exoticActivities = allActivities.filter(act => exoticReferenceIds.includes(act.activityDetails.referenceId));
+    console.log(`[EXOTIC] Activités exotiques trouvées : ${exoticActivities.length}`);
 
     // Pour chaque activité, récupérer le nom via DestinyActivityDefinition
     const mappedActivities = await Promise.all(exoticActivities.slice(0, 10).map(async (act) => {
