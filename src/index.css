@@ -93,9 +93,7 @@
   background: #0AA67A;
   color: #033159;
 }
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* @tailwind directives removed because Tailwind CSS is not being processed */
 
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -134,8 +132,9 @@ html {
 }
 
 h1 {
-  @apply text-4xl font-bold text-blue-500;
   font-size: 3.2em;
+  font-weight: bold;
+  color: #3b82f6; /* Tailwind's text-blue-500 */
   line-height: 1.1;
 }
 
