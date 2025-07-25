@@ -92,6 +92,18 @@ export default function Dashboard() {
       .catch(err => setCompletionsError(err.response?.data?.error || 'Erreur lors de la récupération des complétions'));
   }, [accessToken, exoticHashes]);
 
+  // Calcul des stats globales dynamiques
+  const totalTimeSeconds = realCompletions.reduce((sum, act) => sum + (act.values?.timePlayedSeconds?.basic?.value || 0), 0);
+  const totalDeaths = realCompletions.reduce((sum, act) => sum + (act.values?.deaths?.basic?.value || 0), 0);
+  const totalCompletions = realCompletions.reduce((sum, act) => sum + (act.values?.completed?.basic?.value ? 1 : 0), 0);
+
+  // Formatage du temps total en h min
+  function formatTime(seconds) {
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    return `${h}h ${m}m`;
+  }
+
   return (
     <>
       {/* Header / Login Section */}
@@ -160,15 +172,15 @@ export default function Dashboard() {
       <div className="w-full max-w-none grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
         <div className="bg-white dark:bg-[#23243a] rounded-2xl shadow-lg p-6 flex flex-col items-center">
           <span className="text-sm text-gray-400 mb-1 flex items-center gap-2"><i className="fa-solid fa-clock text-yellow-400"></i> TIME SPENT</span>
-          <span className="text-2xl font-bold">36h 17m</span>
+          <span className="text-2xl font-bold">{accessToken ? formatTime(totalTimeSeconds) : '--'}</span>
         </div>
         <div className="bg-white dark:bg-[#23243a] rounded-2xl shadow-lg p-6 flex flex-col items-center">
           <span className="text-sm text-gray-400 mb-1 flex items-center gap-2"><i className="fa-solid fa-face-dizzy text-red-500"></i> DEATHS</span>
-          <span className="text-2xl font-bold">128</span>
+          <span className="text-2xl font-bold">{accessToken ? totalDeaths : '--'}</span>
         </div>
         <div className="bg-white dark:bg-[#23243a] rounded-2xl shadow-lg p-6 flex flex-col items-center">
           <span className="text-sm text-gray-400 mb-1 flex items-center gap-2"><i className="fa-solid fa-trophy text-green-400"></i> COMPLETIONS</span>
-          <span className="text-2xl font-bold">45</span>
+          <span className="text-2xl font-bold">{accessToken ? totalCompletions : '--'}</span>
         </div>
       </div>
 
