@@ -104,6 +104,7 @@ app.get('/api/profile', async (req, res) => {
 
 // Route pour récupérer les activités Bungie du joueur connecté
 app.get('/api/activities', async (req, res) => {
+  console.log('[API] /api/activities appelée');
   const auth = req.headers.authorization;
   if (!auth || !auth.startsWith('Bearer ')) {
     return res.status(401).json({ error: 'Token manquant' });
@@ -198,6 +199,9 @@ app.get('/api/activities', async (req, res) => {
 
     // Debug : log les premiers referenceId récupérés
     console.log('[DEBUG] referenceIds des activités récupérées (premiers 20) :', allActivities.slice(0, 20).map(a => a.activityDetails.referenceId));
+    // Log tous les referenceId uniques récupérés pour debug
+    const allRefIds = [...new Set(allActivities.map(a => a.activityDetails.referenceId))];
+    console.log('[DEBUG] TOUS les referenceIds uniques récupérés :', allRefIds);
 
     // Correction : comparer en string pour éviter les problèmes de signe/type
     const exoticRefStr = exoticReferenceIds.map(String);
