@@ -1,3 +1,12 @@
+// Définition des thèmes par extension ou nom de mission principale
+const MISSION_THEMES = {
+  "The Witch Queen": {
+    name: "The Witch Queen",
+    colors: ["#3A1F73", "#033159", "#027353", "#0AA67A", "#592608"],
+    gradient: "linear-gradient(135deg, #3A1F73 0%, #033159 25%, #027353 50%, #0AA67A 75%, #592608 100%)"
+  },
+  // Ajoute d'autres thèmes ici si besoin
+};
 
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -19,13 +28,18 @@ export default function Missions() {
         activities.forEach(act => {
           // On considère le nom principal comme tout avant le premier ':' ou '('
           const mainName = act.name.split(/[:(]/)[0].trim();
+          // Détecte le thème (par extension ou nom principal)
+          let theme = null;
+          if (act.description?.includes("The Witch Queen") || mainName === "Presage") theme = MISSION_THEMES["The Witch Queen"];
+          // Ajoute d'autres conditions pour d'autres thèmes ici
           if (!groupByMain[mainName]) {
             groupByMain[mainName] = {
               main: act,
               variants: [],
-              extension: act.description?.includes("The Final Shape") ? "The Final Shape" : null,
+              extension: act.description?.includes("The Final Shape") ? "The Final Shape" : (theme ? theme.name : null),
               description: act.description,
               pgcrImage: act.pgcrImage,
+              theme,
             };
           }
           // Ajoute la variante (le nom complet)
@@ -47,28 +61,37 @@ export default function Missions() {
       {loading && <div className="text-gray-400">Chargement...</div>}
       {error && <div className="text-red-400">{error}</div>}
       <div className="flex flex-col gap-8">
-        {!loading && !error && exoticActivities.map((mission, idx) => (
-          <div key={mission.main.hash || idx} className="rounded-2xl shadow-lg overflow-hidden relative" style={{ background: mission.pgcrImage ? `url(${mission.pgcrImage}) center/cover no-repeat` : '#23243a' }}>
-            <div className="bg-black/60 dark:bg-[#23243a]/80 p-8 flex flex-col gap-2 min-h-[280px]">
-              <div className="text-3xl font-bold mb-2 text-yellow-400 drop-shadow-lg">{mission.main.name.split(/[:(]/)[0].trim()}</div>
-              <div className="italic text-lg text-gray-300 mb-2">{mission.description || "Aucune description."}</div>
-              {mission.extension && (
-                <div className="mb-2"><span className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-3 py-1 rounded">Extension : {mission.extension}</span></div>
-              )}
-              <div className="mb-2">
-                <span className="font-semibold text-gray-200">Variants :</span>{' '}
-                {mission.variants.map(variant => (
-                  <Link key={variant.hash} to={`/missions/${variant.hash}`} className="inline-block bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-3 py-1 m-1 rounded shadow hover:bg-yellow-100 dark:hover:bg-yellow-900 transition">
-                    {variant.name.replace(mission.main.name.split(/[:(]/)[0].trim(), '').replace(/[:()]/g, '').trim() || 'Standard'}
-                  </Link>
-                ))}
-              </div>
-              <div className="bg-gray-200/80 dark:bg-gray-700/80 rounded p-3 mt-4 text-center text-gray-500">
-                Stats à venir...
+        {!loading && !error && exoticActivities.map((mission, idx) => {
+          const theme = mission.theme;
+          return (
+            <div
+              key={mission.main.hash || idx}
+              className="rounded-2xl shadow-lg overflow-hidden relative"
+              style={{
+                background: theme ? theme.gradient : (mission.pgcrImage ? `url(${mission.pgcrImage}) center/cover no-repeat` : '#23243a'),
+              }}
+            >
+              <div className={theme ? "bg-black/50 p-8 flex flex-col gap-2 min-h-[280px]" : "bg-black/60 dark:bg-[#23243a]/80 p-8 flex flex-col gap-2 min-h-[280px]"}>
+                <div className="text-3xl font-bold mb-2" style={theme ? { color: theme.colors[3], textShadow: `0 2px 8px ${theme.colors[0]}` } : { color: '#FFD600' }}>{mission.main.name.split(/[:(]/)[0].trim()}</div>
+                <div className="italic text-lg text-gray-300 mb-2">{mission.description || "Aucune description."}</div>
+                {mission.extension && (
+                  <div className="mb-2"><span className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-3 py-1 rounded">Extension : {mission.extension}</span></div>
+                )}
+                <div className="mb-2">
+                  <span className="font-semibold text-gray-200">Variants :</span>{' '}
+                  {mission.variants.map(variant => (
+                    <Link key={variant.hash} to={`/missions/${variant.hash}`} className="inline-block bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-3 py-1 m-1 rounded shadow hover:bg-yellow-100 dark:hover:bg-yellow-900 transition">
+                      {variant.name.replace(mission.main.name.split(/[:(]/)[0].trim(), '').replace(/[:()]/g, '').trim() || 'Standard'}
+                    </Link>
+                  ))}
+                </div>
+                <div className="bg-gray-200/80 dark:bg-gray-700/80 rounded p-3 mt-4 text-center text-gray-500">
+                  Stats à venir...
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
