@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
-
 // Liste des thèmes disponibles
+function Settings() {
   const THEMES = [
     { value: "dark", label: "Sombre (par défaut)" },
     { value: "light", label: "Clair" },
@@ -64,3 +64,5 @@ import { useState, useEffect } from "react";
     </div>
   );
 }
+
+export default Settings;
