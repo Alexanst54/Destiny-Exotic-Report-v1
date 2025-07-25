@@ -1,3 +1,97 @@
+// Route pour récupérer tout l'historique d'activités d'un joueur (hash + nom)
+app.get('/api/all-activities', async (req, res) => {
+  const auth = req.headers.authorization;
+  if (!auth || !auth.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Token manquant' });
+  }
+  const accessToken = auth.replace('Bearer ', '');
+
+  try {
+    // Récupérer l'identité du joueur
+    const userRes = await axios.get('https://www.bungie.net/Platform/User/GetMembershipsForCurrentUser/', {
+      headers: {
+        'X-API-Key': process.env.BUNGIE_API_KEY,
+        'Authorization': `Bearer ${accessToken}`
+      }
+    });
+    const memberships = userRes.data.Response.destinyMemberships;
+    if (!memberships || memberships.length === 0) {
+      return res.status(404).json({ error: 'Aucun profil Destiny trouvé' });
+    }
+    const main = memberships[0];
+
+    // Récupérer la liste des personnages
+    let profileRes;
+    try {
+      profileRes = await axios.get(`https://www.bungie.net/Platform/Destiny2/${main.membershipType}/Profile/${main.membershipId}/?components=100,200`, {
+        headers: {
+          'X-API-Key': process.env.BUNGIE_API_KEY,
+          'Authorization': `Bearer ${accessToken}`
+        }
+      });
+    } catch (e) {
+      return res.status(500).json({ error: 'Erreur lors de la récupération du profil Bungie', details: e.message });
+    }
+    const characters = profileRes.data?.Response?.characters?.data;
+    if (!characters || typeof characters !== 'object') {
+      return res.status(404).json({ error: 'Aucun personnage Destiny trouvé (structure Bungie invalide)' });
+    }
+    const characterIds = Object.keys(characters);
+    if (!characterIds.length) {
+      return res.status(404).json({ error: 'Aucun personnage Destiny trouvé' });
+    }
+    const characterId = characterIds[0]; // Prend le premier personnage
+
+    // Pagination pour récupérer toutes les activités disponibles (par pages de 250)
+    let allActivities = [];
+    let page = 0;
+    const pageSize = 250;
+    let keepGoing = true;
+    while (keepGoing) {
+      let activitiesRes;
+      try {
+        activitiesRes = await axios.get(`https://www.bungie.net/Platform/Destiny2/${main.membershipType}/Account/${main.membershipId}/Character/${characterId}/Stats/Activities/?count=${pageSize}&page=${page}`,
+          {
+            headers: {
+              'X-API-Key': process.env.BUNGIE_API_KEY,
+              'Authorization': `Bearer ${accessToken}`
+            }
+          });
+      } catch (e) {
+        break;
+      }
+      const activities = activitiesRes.data.Response.activities || [];
+      allActivities = allActivities.concat(activities);
+      if (activities.length < pageSize) {
+        keepGoing = false;
+      } else {
+        page++;
+      }
+      if (page > 20) keepGoing = false;
+    }
+
+    // Pour chaque activité, récupérer le nom via DestinyActivityDefinition
+    const result = await Promise.all(allActivities.map(async (act) => {
+      let activityName = null;
+      try {
+        const defRes = await axios.get(`https://www.bungie.net/Platform/Destiny2/Manifest/DestinyActivityDefinition/${act.activityDetails.referenceId}/`, {
+          headers: { 'X-API-Key': process.env.BUNGIE_API_KEY }
+        });
+        activityName = defRes.data.Response?.displayProperties?.name || null;
+      } catch (e) {
+        activityName = null;
+      }
+      return {
+        referenceId: act.activityDetails.referenceId,
+        name: activityName
+      };
+    }));
+
+    res.json({ activities: result });
+  } catch (err) {
+    res.status(500).json({ error: 'Erreur lors de la récupération des activités Bungie', details: err.message });
+  }
+});
 // Use CommonJS syntax; ensure your file extension is .js and not .mjs, and your package.json does not specify "type": "module"
 const dotenv = require('dotenv');
 const express = require('express');
