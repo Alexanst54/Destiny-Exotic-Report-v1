@@ -203,6 +203,20 @@ app.get('/api/activities', async (req, res) => {
     const allRefIds = [...new Set(allActivities.map(a => a.activityDetails.referenceId))];
     console.log('[DEBUG] TOUS les referenceIds uniques récupérés :', allRefIds);
 
+    // Pour debug : affiche le nom de l'activité pour les 10 premiers referenceId uniques
+    const first10RefIds = allRefIds.slice(0, 10);
+    await Promise.all(first10RefIds.map(async (refId) => {
+      try {
+        const defRes = await axios.get(`https://www.bungie.net/Platform/Destiny2/Manifest/DestinyActivityDefinition/${refId}/`, {
+          headers: { 'X-API-Key': process.env.BUNGIE_API_KEY }
+        });
+        const name = defRes.data.Response?.displayProperties?.name || null;
+        console.log(`[DEBUG] Nom activité pour referenceId ${refId} :`, name);
+      } catch (e) {
+        console.log(`[DEBUG] Erreur récupération nom activité pour referenceId ${refId} :`, e.message);
+      }
+    }));
+
     // Correction : comparer en string pour éviter les problèmes de signe/type
     const exoticRefStr = exoticReferenceIds.map(String);
     const exoticActivities = allActivities.filter(act => exoticRefStr.includes(String(act.activityDetails.referenceId)));
