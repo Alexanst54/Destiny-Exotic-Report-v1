@@ -163,6 +163,7 @@ app.get('/api/activities', async (req, res) => {
           }
         });
       const activities = activitiesRes.data.Response.activities || [];
+      console.log(`[PAGINATION] Page ${page} : ${activities.length} activités récupérées`);
       allActivities = allActivities.concat(activities);
       if (activities.length < pageSize) {
         keepGoing = false;
@@ -172,6 +173,7 @@ app.get('/api/activities', async (req, res) => {
       // Sécurité : ne pas dépasser 20 pages (5000 activités max)
       if (page > 20) keepGoing = false;
     }
+    console.log(`[PAGINATION] Total activités récupérées : ${allActivities.length}`);
 
     // Filtrer pour ne garder que les activités exotiques
     const exoticActivities = allActivities.filter(act => exoticReferenceIds.includes(act.activityDetails.referenceId));
