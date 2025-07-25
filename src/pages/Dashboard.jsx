@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 // Pour filtrer les exotiques
-import exoticList from '../../../backend/activity.json';
+
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, LineChart, Line, Legend } from "recharts";
 
 import BungieProfile from '../components/BungieProfile';
@@ -54,22 +54,29 @@ export default function Dashboard() {
   const [realCompletions, setRealCompletions] = useState([]);
   const [completionsError, setCompletionsError] = useState("");
 
+  const [exoticHashes, setExoticHashes] = useState(new Set());
   useEffect(() => {
-    if (!accessToken) return;
+    fetch('/api/exotic-activities')
+      .then(res => res.json())
+      .then(data => {
+        const hashes = new Set((data.activities || []).map(a => String(a.referenceId)));
+        setExoticHashes(hashes);
+      });
+  }, []);
+
+  useEffect(() => {
+    if (!accessToken || !exoticHashes.size) return;
     axios
       .get(`${API_URL}/api/activities`, {
         headers: { Authorization: `Bearer ${accessToken}` }
       })
       .then(res => {
         const all = res.data.activities || [];
-        // Liste des hashs exotiques (sous forme de string ou number)
-        const exoticHashes = new Set((exoticList.activities || []).map(a => String(a.referenceId)));
-        // Filtre uniquement les activités exotiques
         const filtered = all.filter(act => exoticHashes.has(String(act.activityDetails?.referenceId)));
         setRealCompletions(filtered);
       })
       .catch(err => setCompletionsError(err.response?.data?.error || 'Erreur lors de la récupération des complétions'));
-  }, [accessToken]);
+  }, [accessToken, exoticHashes]);
 
   return (
     <>
