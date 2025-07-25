@@ -140,8 +140,16 @@ app.get('/api/activities', async (req, res) => {
     }
     const characterId = characterIds[0]; // Prend le premier personnage
 
-    // Récupérer les activités du personnage
-    const activitiesRes = await axios.get(`https://www.bungie.net/Platform/Destiny2/${main.membershipType}/Account/${main.membershipId}/Character/${characterId}/Stats/Activities/?count=10`, {
+    // Liste des referenceIds des missions exotiques (hashes extraits de src/pages/Missions.jsx)
+    const exoticReferenceIds = [
+      -2132841886, 655052177, -1932104431, -1932104430, -1553027841, 1550266704, -1174422607, -752855492, -752855491, -752855489,
+      -1626230148, 613120446, 666172264, 901429423, -1563758630, -933221025, 1848771417, -411671539, -93120625, -1375158087,
+      202306511, 995051012, 1221538367, -416696360, -998179575, -847719003, 367562924, 264074906, 715393254, 1044034163,
+      1583447699, 1948474391, 1013336498, 196691221, 896748846, 1768099736, 74501540, -423446509, 576782083, 1099555105, 1738383283
+    ];
+
+    // Récupérer les activités du personnage (on en prend 30 pour avoir assez de chances d'avoir 10 exotiques)
+    const activitiesRes = await axios.get(`https://www.bungie.net/Platform/Destiny2/${main.membershipType}/Account/${main.membershipId}/Character/${characterId}/Stats/Activities/?count=30`, {
       headers: {
         'X-API-Key': process.env.BUNGIE_API_KEY,
         'Authorization': `Bearer ${accessToken}`
@@ -150,8 +158,11 @@ app.get('/api/activities', async (req, res) => {
 
     const activities = activitiesRes.data.Response.activities || [];
 
+    // Filtrer pour ne garder que les activités exotiques
+    const exoticActivities = activities.filter(act => exoticReferenceIds.includes(act.activityDetails.referenceId));
+
     // Pour chaque activité, récupérer le nom via DestinyActivityDefinition
-    const mappedActivities = await Promise.all(activities.map(async (act) => {
+    const mappedActivities = await Promise.all(exoticActivities.slice(0, 10).map(async (act) => {
       let activityName = null;
       try {
         const defRes = await axios.get(`https://www.bungie.net/Platform/Destiny2/Manifest/DestinyActivityDefinition/${act.activityDetails.referenceId}/`, {
