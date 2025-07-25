@@ -1,3 +1,17 @@
+  // Debug visuel : nombre d'activités récupérées et filtrées
+  const [allActivitiesCount, setAllActivitiesCount] = useState(0);
+  const [allActivitiesRaw, setAllActivitiesRaw] = useState([]);
+  useEffect(() => {
+    if (!accessToken || !exoticHashes.size) return;
+    axios
+      .get(`${API_URL}/api/activities`, {
+        headers: { Authorization: `Bearer ${accessToken}` }
+      })
+      .then(res => {
+        setAllActivitiesCount((res.data.activities || []).length);
+        setAllActivitiesRaw(res.data.activities || []);
+      });
+  }, [accessToken, exoticHashes]);
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 // Pour filtrer les exotiques
@@ -8,6 +22,7 @@ import BungieProfile from '../components/BungieProfile';
 import BungieActivities from '../components/BungieActivities';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
 
 export default function Dashboard() {
   // Données dynamiques pour les graphiques
@@ -21,8 +36,23 @@ export default function Dashboard() {
   const [accessToken, setAccessToken] = useState(null);
   const [authMessage, setAuthMessage] = useState("");
 
+  // Debug visuel : nombre d'activités récupérées et filtrées
+  const [allActivitiesCount, setAllActivitiesCount] = useState(0);
+  const [allActivitiesRaw, setAllActivitiesRaw] = useState([]);
+
   // Récupère l'URL du backend depuis la variable d'environnement
   const apiUrl = import.meta.env.VITE_API_URL;
+  useEffect(() => {
+    if (!accessToken || !exoticHashes?.size) return;
+    axios
+      .get(`${API_URL}/api/activities`, {
+        headers: { Authorization: `Bearer ${accessToken}` }
+      })
+      .then(res => {
+        setAllActivitiesCount((res.data.activities || []).length);
+        setAllActivitiesRaw(res.data.activities || []);
+      });
+  }, [accessToken, exoticHashes]);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -129,6 +159,21 @@ export default function Dashboard() {
         </div>
       </div>
 
+      {/* Debug: nombre d'activités récupérées et filtrées */}
+      {accessToken && (
+        <div className="mb-2 text-xs text-gray-500 dark:text-gray-400">
+          <b>Debug:</b> Activités totales récupérées: {allActivitiesCount} | Exotiques filtrées: {realCompletions.length}
+          {realCompletions.length === 0 && allActivitiesCount > 0 && allActivitiesRaw.length > 0 && (
+            <>
+              <br/>Exemple activité brute:<br/>
+              <pre className="bg-gray-100 dark:bg-gray-800 p-2 rounded max-w-xl overflow-x-auto text-xs">
+                {JSON.stringify(allActivitiesRaw[0], null, 2)}
+              </pre>
+            </>
+          )}
+        </div>
+      )}
+
       {/* Dernières complétions (API) */}
       <div className="w-full max-w-none bg-white dark:bg-[#23243a] rounded-2xl shadow-lg p-6 mb-8">
         <h3 className="text-lg font-bold mb-4 text-gray-900 dark:text-white">Dernières complétions</h3>
@@ -138,6 +183,8 @@ export default function Dashboard() {
           <div className="text-gray-400">
             Aucun historique de complétion exotique trouvé.<br />
             <span className="text-xs">(Jouez ou rejouez une mission exotique pour la voir ici)</span>
+            <br/>
+            <span className="text-xs text-red-400">Debug: Vérifiez le bloc debug ci-dessus pour le contenu des activités récupérées.</span>
           </div>
         )}
         {accessToken && realCompletions.length > 0 && (
