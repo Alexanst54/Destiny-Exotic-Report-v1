@@ -10,24 +10,13 @@ import BungieActivities from '../components/BungieActivities';
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 export default function Dashboard() {
-  // Données fictives par classe
-  const classData = [
-    { name: "Titan", completions: 14 },
-    { name: "Hunter", completions: 21 },
-    { name: "Warlock", completions: 10 },
-  ];
-
-  // Données fictives pour la courbe (complétions par année)
-  const lineData = [
-    { year: 2018, completions: 2 },
-    { year: 2019, completions: 4 },
-    { year: 2020, completions: 5 },
-    { year: 2021, completions: 3 },
-    { year: 2022, completions: 18 },
-    { year: 2023, completions: 40 },
-    { year: 2024, completions: 27 },
-    { year: 2025, completions: 30 },
-  ];
+  // Données dynamiques pour les graphiques
+  const [classData, setClassData] = useState([
+    { name: "Titan", completions: 0 },
+    { name: "Hunter", completions: 0 },
+    { name: "Warlock", completions: 0 },
+  ]);
+  const [lineData, setLineData] = useState([]);
 
   const [accessToken, setAccessToken] = useState(null);
   const [authMessage, setAuthMessage] = useState("");
@@ -74,6 +63,31 @@ export default function Dashboard() {
         const all = res.data.activities || [];
         const filtered = all.filter(act => exoticHashes.has(String(act.activityDetails?.referenceId)));
         setRealCompletions(filtered);
+
+        // Calcul des complétions par classe
+        const classCounts = { Titan: 0, Hunter: 0, Warlock: 0 };
+        filtered.forEach(act => {
+          const classType = act.values?.playerClass?.basic?.displayValue || act.playerClass || "Unknown";
+          if (classType in classCounts) classCounts[classType]++;
+        });
+        setClassData([
+          { name: "Titan", completions: classCounts.Titan },
+          { name: "Hunter", completions: classCounts.Hunter },
+          { name: "Warlock", completions: classCounts.Warlock },
+        ]);
+
+        // Calcul des complétions par année
+        const yearCounts = {};
+        filtered.forEach(act => {
+          const date = act.period ? new Date(act.period) : null;
+          if (date) {
+            const year = date.getFullYear();
+            yearCounts[year] = (yearCounts[year] || 0) + 1;
+          }
+        });
+        // Générer un tableau trié par année
+        const years = Object.keys(yearCounts).sort();
+        setLineData(years.map(year => ({ year: Number(year), completions: yearCounts[year] })));
       })
       .catch(err => setCompletionsError(err.response?.data?.error || 'Erreur lors de la récupération des complétions'));
   }, [accessToken, exoticHashes]);

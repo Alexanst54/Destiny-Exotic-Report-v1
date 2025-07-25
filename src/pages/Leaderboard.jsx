@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import exoticList from '../../../backend/activity.json';
+
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
@@ -24,20 +24,28 @@ export default function Leaderboard() {
     }
   }, []);
 
+  const [exoticHashes, setExoticHashes] = useState(new Set());
   useEffect(() => {
-    if (!accessToken) return;
+    fetch('/api/exotic-activities')
+      .then(res => res.json())
+      .then(data => {
+        const hashes = new Set((data.activities || []).map(a => String(a.referenceId)));
+        setExoticHashes(hashes);
+      });
+  }, []);
+
+  useEffect(() => {
+    if (!accessToken || !exoticHashes.size) return;
     axios.get(`${API_URL}/api/activities`, {
       headers: { Authorization: `Bearer ${accessToken}` }
     })
       .then(res => {
         const all = res.data.activities || [];
-        const exoticHashes = new Set((exoticList.activities || []).map(a => String(a.referenceId)));
-        // Filtre toutes les tentatives exotiques
         const filtered = all.filter(act => exoticHashes.has(String(act.activityDetails?.referenceId)));
         setActivities(filtered);
       })
       .catch(err => setError(err.response?.data?.error || 'Erreur lors de la récupération des activités'));
-  }, [accessToken]);
+  }, [accessToken, exoticHashes]);
 
   return (
     <div className="flex flex-col items-center w-full bg-white dark:bg-[#181926] min-h-screen">
