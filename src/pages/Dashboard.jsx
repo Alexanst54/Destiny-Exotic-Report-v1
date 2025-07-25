@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-// Pour filtrer les exotiques
-
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, LineChart, Line, Legend } from "recharts";
-
 import BungieProfile from '../components/BungieProfile';
 import BungieActivities from '../components/BungieActivities';
-
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-
 
 export default function Dashboard() {
   // Données dynamiques pour les graphiques
