@@ -92,7 +92,12 @@ export default function Dashboard() {
         <h3 className="text-lg font-bold mb-4 text-gray-900 dark:text-white">Dernières complétions</h3>
         {completionsError && <div className="text-red-500 mb-2">{completionsError}</div>}
         {!accessToken && <div className="text-gray-400">Connectez-vous pour voir vos dernières complétions.</div>}
-        {accessToken && !realCompletions.length && !completionsError && <div className="text-gray-400">Chargement des complétions...</div>}
+        {accessToken && !realCompletions.length && !completionsError && (
+          <div className="text-gray-400">
+            Aucun historique de complétion exotique trouvé.<br />
+            <span className="text-xs">(Jouez ou rejouez une mission exotique pour la voir ici)</span>
+          </div>
+        )}
         {accessToken && realCompletions.length > 0 && (
           <ul className="divide-y divide-gray-200 dark:divide-gray-700">
             {realCompletions.map((act, idx) => (
