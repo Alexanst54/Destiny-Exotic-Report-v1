@@ -148,18 +148,33 @@ app.get('/api/activities', async (req, res) => {
       1583447699, 1948474391, 1013336498, 196691221, 896748846, 1768099736, 74501540, -423446509, 576782083, 1099555105, 1738383283
     ];
 
-    // Récupérer les activités du personnage (on en prend 30 pour avoir assez de chances d'avoir 10 exotiques)
-    const activitiesRes = await axios.get(`https://www.bungie.net/Platform/Destiny2/${main.membershipType}/Account/${main.membershipId}/Character/${characterId}/Stats/Activities/?count=30`, {
-      headers: {
-        'X-API-Key': process.env.BUNGIE_API_KEY,
-        'Authorization': `Bearer ${accessToken}`
-      }
-    });
 
-    const activities = activitiesRes.data.Response.activities || [];
+    // Pagination pour récupérer toutes les activités disponibles (par pages de 250)
+    let allActivities = [];
+    let page = 0;
+    const pageSize = 250;
+    let keepGoing = true;
+    while (keepGoing) {
+      const activitiesRes = await axios.get(`https://www.bungie.net/Platform/Destiny2/${main.membershipType}/Account/${main.membershipId}/Character/${characterId}/Stats/Activities/?count=${pageSize}&page=${page}`,
+        {
+          headers: {
+            'X-API-Key': process.env.BUNGIE_API_KEY,
+            'Authorization': `Bearer ${accessToken}`
+          }
+        });
+      const activities = activitiesRes.data.Response.activities || [];
+      allActivities = allActivities.concat(activities);
+      if (activities.length < pageSize) {
+        keepGoing = false;
+      } else {
+        page++;
+      }
+      // Sécurité : ne pas dépasser 20 pages (5000 activités max)
+      if (page > 20) keepGoing = false;
+    }
 
     // Filtrer pour ne garder que les activités exotiques
-    const exoticActivities = activities.filter(act => exoticReferenceIds.includes(act.activityDetails.referenceId));
+    const exoticActivities = allActivities.filter(act => exoticReferenceIds.includes(act.activityDetails.referenceId));
 
     // Pour chaque activité, récupérer le nom via DestinyActivityDefinition
     const mappedActivities = await Promise.all(exoticActivities.slice(0, 10).map(async (act) => {
