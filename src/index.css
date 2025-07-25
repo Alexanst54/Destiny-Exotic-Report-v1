@@ -1,3 +1,10 @@
+/* Police claire forcée pour tous les thèmes sombres custom */
+.theme-witchqueen, .theme-finalshape, .theme-lightfall, .theme-edgeoffate {
+  color: #f3f3f3 !important;
+}
+.theme-witchqueen *, .theme-finalshape *, .theme-lightfall *, .theme-edgeoffate * {
+  color: #f3f3f3 !important;
+}
 /* THEME: The Edge of Fate */
 .theme-edgeoffate {
   background: linear-gradient(135deg, #F2C4DE 0%, #D984AC 25%, #523659 50%, #342C40 75%, #4E458C 100%) !important;
