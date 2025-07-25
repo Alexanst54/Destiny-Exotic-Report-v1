@@ -10,6 +10,65 @@ dotenv.config();
 app.use(cors());
 app.use(express.json());
 
+// Route pour récupérer tout l'historique d'activités d'un joueur (hash + nom)
+app.get('/api/all-activities', async (req, res) => {
+  // Utilise les IDs d'Alex par défaut si non fournis
+  let { membershipType, destinyMembershipId, characterId } = req.query;
+  if (!membershipType) membershipType = '3';
+  if (!destinyMembershipId) destinyMembershipId = '4611686018523435689';
+  if (!characterId) characterId = '2305843010354814338';
+
+  try {
+    // Pagination pour récupérer toutes les activités disponibles (par pages de 250)
+    let allActivities = [];
+    let page = 0;
+    const pageSize = 250;
+    let keepGoing = true;
+    while (keepGoing) {
+      let activitiesRes;
+      try {
+        activitiesRes = await axios.get(`https://www.bungie.net/Platform/Destiny2/${membershipType}/Account/${destinyMembershipId}/Character/${characterId}/Stats/Activities/?count=${pageSize}&page=${page}`,
+          {
+            headers: {
+              'X-API-Key': process.env.BUNGIE_API_KEY
+            }
+          });
+      } catch (e) {
+        break;
+      }
+      const activities = activitiesRes.data.Response.activities || [];
+      allActivities = allActivities.concat(activities);
+      if (activities.length < pageSize) {
+        keepGoing = false;
+      } else {
+        page++;
+      }
+      if (page > 20) keepGoing = false;
+    }
+
+    // Pour chaque activité, récupérer le nom via DestinyActivityDefinition
+    const result = await Promise.all(allActivities.map(async (act) => {
+      let activityName = null;
+      try {
+        const defRes = await axios.get(`https://www.bungie.net/Platform/Destiny2/Manifest/DestinyActivityDefinition/${act.activityDetails.referenceId}/`, {
+          headers: { 'X-API-Key': process.env.BUNGIE_API_KEY }
+        });
+        activityName = defRes.data.Response?.displayProperties?.name || null;
+      } catch (e) {
+        activityName = null;
+      }
+      return {
+        referenceId: act.activityDetails.referenceId,
+        name: activityName
+      };
+    }));
+
+    res.json({ activities: result });
+  } catch (err) {
+    res.status(500).json({ error: 'Erreur lors de la récupération des activités Bungie', details: err.message });
+  }
+});
+
 // Redirige l'utilisateur vers Bungie pour l'auth
 app.get('/auth/login', (req, res) => {
   const url = `https://www.bungie.net/en/OAuth/Authorize?client_id=${process.env.BUNGIE_CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(process.env.REDIRECT_URI || "http://localhost:3000/auth/callback")}`;
