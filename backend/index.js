@@ -1,8 +1,11 @@
-require('dotenv').config();
+// Use CommonJS syntax; ensure your file extension is .js and not .mjs, and your package.json does not specify "type": "module"
+const dotenv = require('dotenv');
 const express = require('express');
 const axios = require('axios');
 const cors = require('cors');
 const app = express();
+
+dotenv.config();
 
 app.use(cors());
 app.use(express.json());
@@ -186,8 +189,13 @@ app.get('/api/activities', async (req, res) => {
     }
     console.log(`[PAGINATION] Total activités récupérées : ${allActivities.length}`);
 
-    // Filtrer pour ne garder que les activités exotiques
-    const exoticActivities = allActivities.filter(act => exoticReferenceIds.includes(act.activityDetails.referenceId));
+
+    // Debug : log les premiers referenceId récupérés
+    console.log('[DEBUG] referenceIds des activités récupérées (premiers 20) :', allActivities.slice(0, 20).map(a => a.activityDetails.referenceId));
+
+    // Correction : comparer en string pour éviter les problèmes de signe/type
+    const exoticRefStr = exoticReferenceIds.map(String);
+    const exoticActivities = allActivities.filter(act => exoticRefStr.includes(String(act.activityDetails.referenceId)));
     console.log(`[EXOTIC] Activités exotiques trouvées : ${exoticActivities.length}`);
 
     // Pour chaque activité, récupérer le nom via DestinyActivityDefinition
