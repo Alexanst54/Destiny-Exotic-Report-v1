@@ -161,7 +161,8 @@ app.get('/api/activities', async (req, res) => {
       133833536,   // kellsfall
       196691221,   // starcrossed
       74501540,    // whisper
-      1738383283   // harbinger
+      1738383283,  // harbinger
+      509188661    // avalon
     ];
 
     // Pagination pour récupérer toutes les activités disponibles (par pages de 250)
