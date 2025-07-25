@@ -149,12 +149,18 @@ app.get('/api/activities', async (req, res) => {
     }
     const characterId = characterIds[0]; // Prend le premier personnage
 
-    // Liste des referenceIds des missions exotiques (hashes extraits de src/pages/Missions.jsx)
+    // Liste des referenceIds des missions exotiques (hashes extraits du manifest anglais)
     const exoticReferenceIds = [
-      -2132841886, 655052177, -1932104431, -1932104430, -1553027841, 1550266704, -1174422607, -752855492, -752855491, -752855489,
-      -1626230148, 613120446, 666172264, 901429423, -1563758630, -933221025, 1848771417, -411671539, -93120625, -1375158087,
-      202306511, 995051012, 1221538367, -416696360, -998179575, -847719003, 367562924, 264074906, 715393254, 1044034163,
-      1583447699, 1948474391, 1013336498, 196691221, 896748846, 1768099736, 74501540, -423446509, 576782083, 1099555105, 1738383283
+      648675065,   // dualdestiny
+      655052177,   // encore
+      613120446,   // voxobscura
+      1848771417,  // zerohour
+      2124066889,  // presage
+      202306511,   // seraphshield
+      133833536,   // kellsfall
+      196691221,   // starcrossed
+      74501540,    // whisper
+      1738383283   // harbinger
     ];
 
     // Pagination pour récupérer toutes les activités disponibles (par pages de 250)
