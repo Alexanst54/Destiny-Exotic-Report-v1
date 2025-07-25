@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, LineChart, Line, Legend } from "recharts";
+
 import BungieProfile from '../components/BungieProfile';
 import BungieActivities from '../components/BungieActivities';
 
@@ -46,6 +47,21 @@ export default function Dashboard() {
     }
   }, [apiUrl]);
 
+
+  // Récupérer les 10 dernières complétions réelles via l'API si connecté
+  const [realCompletions, setRealCompletions] = useState([]);
+  const [completionsError, setCompletionsError] = useState("");
+
+  useEffect(() => {
+    if (!accessToken) return;
+    axios
+      .get(`${API_URL}/api/activities`, {
+        headers: { Authorization: `Bearer ${accessToken}` }
+      })
+      .then(res => setRealCompletions(res.data.activities || []))
+      .catch(err => setCompletionsError(err.response?.data?.error || 'Erreur lors de la récupération des complétions'));
+  }, [accessToken]);
+
   return (
     <>
       {/* Header / Login Section */}
@@ -71,46 +87,38 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Dernières complétions */}
+      {/* Dernières complétions (API) */}
       <div className="w-full max-w-none bg-white dark:bg-[#23243a] rounded-2xl shadow-lg p-6 mb-8">
         <h3 className="text-lg font-bold mb-4 text-gray-900 dark:text-white">Dernières complétions</h3>
-        <ul className="divide-y divide-gray-200 dark:divide-gray-700">
-          {[
-            { mission: "Dual Destiny", date: "2025-07-24", classe: "Titan", heure: "18:42", temps: "22:15", kills: 87, morts: 3, fini: true },
-            { mission: "Encore", date: "2025-07-23", classe: "Hunter", heure: "21:10", temps: "19:40", kills: 102, morts: 5, fini: true },
-            { mission: "Zero Hour", date: "2025-07-22", classe: "Warlock", heure: "20:05", temps: "17:55", kills: 76, morts: 2, fini: false },
-            { mission: "Vox Obscura", date: "2025-07-21", classe: "Titan", heure: "19:30", temps: "23:10", kills: 91, morts: 4, fini: true },
-            { mission: "Operation: Seraph's Shield", date: "2025-07-20", classe: "Hunter", heure: "22:15", temps: "20:30", kills: 110, morts: 6, fini: true },
-            { mission: "Kell's Fall", date: "2025-07-19", classe: "Warlock", heure: "17:55", temps: "18:20", kills: 68, morts: 1, fini: false },
-            { mission: "Starcrossed", date: "2025-07-18", classe: "Titan", heure: "16:40", temps: "21:05", kills: 95, morts: 3, fini: true },
-            { mission: "The Whisper", date: "2025-07-17", classe: "Hunter", heure: "20:20", temps: "16:50", kills: 120, morts: 7, fini: true },
-            { mission: "Presage", date: "2025-07-16", classe: "Warlock", heure: "21:50", temps: "19:10", kills: 82, morts: 2, fini: true },
-            { mission: "Harbinger", date: "2025-07-15", classe: "Titan", heure: "19:05", temps: "22:00", kills: 77, morts: 4, fini: false },
-          ].map((item, idx) => (
-            <li key={idx} className="flex flex-col md:flex-row md:items-center justify-between py-3 gap-2 md:gap-0">
-              <div className="flex items-center gap-3 min-w-[180px]">
-                <img src={`/images/${item.classe.toLowerCase()}.png`} alt={item.classe} className="w-7 h-7 rounded-full border-2 border-yellow-400 shadow" />
-                <div>
-                  <span className="font-semibold text-gray-900 dark:text-white">{item.mission}</span>
-                  <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">({item.classe})</span>
+        {completionsError && <div className="text-red-500 mb-2">{completionsError}</div>}
+        {!accessToken && <div className="text-gray-400">Connectez-vous pour voir vos dernières complétions.</div>}
+        {accessToken && !realCompletions.length && !completionsError && <div className="text-gray-400">Chargement des complétions...</div>}
+        {accessToken && realCompletions.length > 0 && (
+          <ul className="divide-y divide-gray-200 dark:divide-gray-700">
+            {realCompletions.map((act, idx) => (
+              <li key={idx} className="flex flex-col md:flex-row md:items-center justify-between py-3 gap-2 md:gap-0">
+                <div className="flex items-center gap-3 min-w-[180px]">
+                  <img src={`/images/unknown.png`} alt="Classe" className="w-7 h-7 rounded-full border-2 border-yellow-400 shadow" />
+                  <div>
+                    <span className="font-semibold text-gray-900 dark:text-white">{act.activityDetails?.referenceId || 'Mission inconnue'}</span>
+                  </div>
                 </div>
-              </div>
-              <div className="flex flex-wrap gap-4 text-xs text-gray-500 dark:text-gray-400 items-center justify-start md:justify-end">
-                <span><i className="fa-regular fa-calendar mr-1"></i>{item.date} {item.heure}</span>
-                <span><i className="fa-solid fa-stopwatch mr-1 text-yellow-400"></i>Temps: <span className="font-semibold text-gray-900 dark:text-white">{item.temps}</span></span>
-                <span><i className="fa-solid fa-skull-crossbones mr-1 text-red-400"></i>Kills: <span className="font-semibold text-gray-900 dark:text-white">{item.kills}</span></span>
-                <span><i className="fa-solid fa-heart-crack mr-1 text-red-500"></i>Morts: <span className="font-semibold text-gray-900 dark:text-white">{item.morts}</span></span>
-                <span>
-                  {item.fini ? (
-                    <span className="inline-flex items-center px-2 py-1 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 rounded-full"><i className="fa-solid fa-check mr-1"></i> Fini</span>
-                  ) : (
-                    <span className="inline-flex items-center px-2 py-1 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 rounded-full"><i className="fa-solid fa-xmark mr-1"></i> Non fini</span>
-                  )}
-                </span>
-              </div>
-            </li>
-          ))}
-        </ul>
+                <div className="flex flex-wrap gap-4 text-xs text-gray-500 dark:text-gray-400 items-center justify-start md:justify-end">
+                  <span><i className="fa-regular fa-calendar mr-1"></i>{act.period}</span>
+                  <span><i className="fa-solid fa-skull-crossbones mr-1 text-red-400"></i>Kills: <span className="font-semibold text-gray-900 dark:text-white">{act.values?.kills?.basic?.value ?? '-'}</span></span>
+                  <span><i className="fa-solid fa-heart-crack mr-1 text-red-500"></i>Morts: <span className="font-semibold text-gray-900 dark:text-white">{act.values?.deaths?.basic?.value ?? '-'}</span></span>
+                  <span>
+                    {act.values?.completed?.basic?.value ? (
+                      <span className="inline-flex items-center px-2 py-1 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 rounded-full"><i className="fa-solid fa-check mr-1"></i> Fini</span>
+                    ) : (
+                      <span className="inline-flex items-center px-2 py-1 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 rounded-full"><i className="fa-solid fa-xmark mr-1"></i> Non fini</span>
+                    )}
+                  </span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       {/* Stats & Charts Section */}
@@ -167,37 +175,4 @@ export default function Dashboard() {
   );
 }
 
-function BungieProfile({ accessToken }) {
-  const [profile, setProfile] = useState(null);
-  const [error, setError] = useState('');
-
-  useEffect(() => {
-    if (!accessToken) return;
-    axios
-      .get(`${API_URL}/api/profile`, {
-        headers: { Authorization: `Bearer ${accessToken}` }
-      })
-      .then(res => setProfile(res.data))
-      .catch(err => setError(err.response?.data?.error || 'Erreur'));
-  }, [accessToken]);
-
-  if (error) return <div>Erreur : {error}</div>;
-  if (!profile) return <div>Chargement du profil...</div>;
-
-  return (
-    <div className="p-4 border rounded bg-gray-100 flex flex-col items-center">
-      {/* Emblème du joueur */}
-      {(profile.emblemPath || profile.iconPath) && (
-        <img
-          src={`https://www.bungie.net${profile.emblemPath || profile.iconPath}`}
-          alt="Emblème du joueur"
-          className="w-20 h-20 rounded-full mb-2 border-4 border-yellow-400 shadow"
-        />
-      )}
-      <h2 className="text-xl font-bold mb-2">{profile.displayName}</h2>
-      <div>Plateforme : {profile.platform}</div>
-      <div>Clan : {profile.clanName || 'Aucun'}</div>
-      <div>Niveau de saison : {profile.seasonLevel ?? 'N/A'}</div>
-    </div>
-  );
-}
+// ...existing code...
