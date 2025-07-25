@@ -100,7 +100,7 @@ export default function Dashboard() {
                 <div className="flex items-center gap-3 min-w-[180px]">
                   <img src={`/images/unknown.png`} alt="Classe" className="w-7 h-7 rounded-full border-2 border-yellow-400 shadow" />
                   <div>
-                    <span className="font-semibold text-gray-900 dark:text-white">{act.activityDetails?.referenceId || 'Mission inconnue'}</span>
+                    <span className="font-semibold text-gray-900 dark:text-white">{act.activityName || act.activityDetails?.referenceId || 'Mission inconnue'}</span>
                   </div>
                 </div>
                 <div className="flex flex-wrap gap-4 text-xs text-gray-500 dark:text-gray-400 items-center justify-start md:justify-end">
