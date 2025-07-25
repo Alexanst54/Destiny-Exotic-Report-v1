@@ -136,7 +136,7 @@ app.get('/api/activities', async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Backend Express running on http://localhost:${PORT}`);
 });
